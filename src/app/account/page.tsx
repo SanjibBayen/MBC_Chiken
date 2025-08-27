@@ -3,64 +3,95 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { useState } from 'react';
+import { useAuth } from '@/hooks/use-auth';
+import { Skeleton } from '@/components/ui/skeleton';
+import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 
-// Define a type for the user for better type-safety
-interface UserProfile {
-    name: string;
-    email: string;
-    phone: string;
-    address: {
-      street: string;
-      city: string;
-      pincode: string;
-    };
-}
 
 export default function AccountPage() {
-  // In a real app, this would come from an auth context or API call
-  // Setting it to null to represent a logged-out or loading state
-  const [user, setUser] = useState<UserProfile | null>(null);
+  const { user, userData, loading } = useAuth();
+  const router = useRouter();
 
-  // TODO: Implement user authentication and fetch user data
+  if (loading) {
+    return <AccountSkeleton />;
+  }
+
+  if (!user) {
+     router.push('/login'); // Should not happen if layout protects it, but as a fallback
+     return null;
+  }
 
   return (
     <Card>
-      <CardHeader>
+      <CardHeader className="flex flex-row items-center justify-between">
         <CardTitle>My Profile</CardTitle>
+        <Button variant="outline">Edit Profile</Button>
       </CardHeader>
-      <CardContent className="space-y-4">
-        {user ? (
+      <CardContent className="space-y-6">
+        {userData ? (
           <>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div>
                 <p className="text-sm text-muted-foreground">Full Name</p>
-                <p className="font-medium">{user.name}</p>
+                <p className="font-medium">{userData.name}</p>
               </div>
               <div>
                 <p className="text-sm text-muted-foreground">Email Address</p>
-                <p className="font-medium">{user.email}</p>
+                <p className="font-medium">{userData.email}</p>
               </div>
               <div>
                 <p className="text-sm text-muted-foreground">Phone Number</p>
-                <p className="font-medium">{user.phone}</p>
+                <p className="font-medium">{userData.phone || 'Not provided'}</p>
               </div>
             </div>
             <div>
               <p className="text-sm text-muted-foreground">Saved Address</p>
-              <p className="font-medium">
-                {user.address.street}, {user.address.city}, {user.address.pincode}
-              </p>
+              {userData.address?.street ? (
+                <p className="font-medium">
+                  {userData.address.street}, {userData.address.city}, {userData.address.pincode}
+                </p>
+              ): (
+                <p className="text-muted-foreground italic">No address saved.</p>
+              )}
             </div>
-            <Button>Edit Profile</Button>
           </>
         ) : (
-          <div className="text-center text-muted-foreground">
-            <p>Please log in to view your profile.</p>
-            <Button className="mt-4">Login</Button>
+           <div className="text-center text-muted-foreground py-8">
+            <p>Could not load user profile. Please try again later.</p>
           </div>
         )}
       </CardContent>
     </Card>
   );
+}
+
+function AccountSkeleton() {
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle>My Profile</CardTitle>
+      </CardHeader>
+      <CardContent className="space-y-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="space-y-2">
+            <Skeleton className="h-4 w-24" />
+            <Skeleton className="h-5 w-40" />
+          </div>
+          <div className="space-y-2">
+            <Skeleton className="h-4 w-24" />
+            <Skeleton className="h-5 w-48" />
+          </div>
+          <div className="space-y-2">
+            <Skeleton className="h-4 w-24" />
+            <Skeleton className="h-5 w-32" />
+          </div>
+        </div>
+        <div className="space-y-2">
+          <Skeleton className="h-4 w-24" />
+          <Skeleton className="h-5 w-64" />
+        </div>
+      </CardContent>
+    </Card>
+  )
 }

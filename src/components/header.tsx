@@ -6,15 +6,28 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-import { Menu, Search, ShoppingCart, User, MapPin, ChevronDown, Layers, Phone } from "lucide-react";
+import { Menu, Search, ShoppingCart, User, MapPin, ChevronDown, Layers, Phone, Bell, LogOut } from "lucide-react";
 import { Logo } from "./logo";
 import { useCart } from "@/hooks/use-cart";
 import { useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
 import { usePathname } from "next/navigation";
-import { SHOP_ADDRESS, SHOP_NAME, CONTACT_PHONE, SHOP_SLOGAN } from "@/lib/constants";
+import { SHOP_ADDRESS, CONTACT_PHONE, SHOP_SLOGAN } from "@/lib/constants";
 import { CartSheet } from "@/components/cart-sheet";
 import { CategoryMenu } from "./category-menu";
+import { useAuth } from "@/hooks/use-auth";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
+import { signOut } from "firebase/auth";
+import { auth } from "@/lib/firebase";
+import { useToast } from "@/hooks/use-toast";
+import { useRouter } from "next/navigation";
 
 function ClientOnlyCart() {
   const { cartCount, isCartOpen, setIsCartOpen } = useCart();
@@ -57,6 +70,9 @@ function ClientOnlyCart() {
 
 export function Header() {
   const pathname = usePathname();
+  const { user, loading } = useAuth();
+  const { toast } = useToast();
+  const router = useRouter();
 
   const navLinks = [
     { href: "/", label: "Home" },
@@ -64,6 +80,15 @@ export function Header() {
     { href: "/about", label: "About Us" },
     { href: "/contact", label: "Contact" },
   ];
+
+  const handleLogout = async () => {
+    await signOut(auth);
+    toast({
+      title: "Logged Out",
+      description: "You have been successfully logged out.",
+    });
+    router.push('/');
+  }
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -135,12 +160,47 @@ export function Header() {
 
         <div className="flex items-center gap-1">
             <CategoryMenu />
-            <Button asChild variant="ghost" className="flex items-center gap-2 px-2 hover:bg-transparent">
-                <Link href="/account">
-                <User className="h-6 w-6" />
-                <span className="hidden md:block">Login</span>
-                </Link>
+             <Button variant="ghost" className="flex items-center gap-2 px-2 hover:bg-transparent">
+                <Bell className="h-6 w-6" />
+                <span className="sr-only">Notifications</span>
             </Button>
+            {loading ? (
+              <Button variant="ghost" className="flex items-center gap-2 px-2 hover:bg-transparent" disabled>
+                <User className="h-6 w-6" />
+                <span className="hidden md:block">...</span>
+              </Button>
+            ) : user ? (
+                 <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                        <Button variant="ghost" className="flex items-center gap-2 px-2 hover:bg-transparent">
+                            <User className="h-6 w-6" />
+                            <span className="hidden md:block">Account</span>
+                        </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end">
+                        <DropdownMenuLabel>My Account</DropdownMenuLabel>
+                        <DropdownMenuSeparator />
+                        <DropdownMenuItem asChild>
+                            <Link href="/account">Profile</Link>
+                        </DropdownMenuItem>
+                        <DropdownMenuItem asChild>
+                            <Link href="/account/orders">Orders</Link>
+                        </DropdownMenuItem>
+                        <DropdownMenuSeparator />
+                        <DropdownMenuItem onClick={handleLogout}>
+                           <LogOut className="mr-2 h-4 w-4" />
+                           Logout
+                        </DropdownMenuItem>
+                    </DropdownMenuContent>
+                </DropdownMenu>
+            ) : (
+                <Button asChild variant="ghost" className="flex items-center gap-2 px-2 hover:bg-transparent">
+                    <Link href="/login">
+                    <User className="h-6 w-6" />
+                    <span className="hidden md:block">Login</span>
+                    </Link>
+                </Button>
+            )}
           
           <ClientOnlyCart />
         </div>

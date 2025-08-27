@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useCart } from "@/hooks/use-cart";
@@ -17,6 +18,8 @@ import { Separator } from "@/components/ui/separator";
 import { useRouter } from "next/navigation";
 import { useToast } from "@/hooks/use-toast";
 import { useEffect } from "react";
+import { useAuth } from "@/hooks/use-auth";
+import { Skeleton } from "@/components/ui/skeleton";
 
 const checkoutSchema = z.object({
   name: z.string().min(2, "Name is required"),
@@ -32,14 +35,9 @@ const checkoutSchema = z.object({
 
 export default function CheckoutPage() {
   const { cartItems, cartTotal, clearCart } = useCart();
+  const { user, userData, loading } = useAuth();
   const router = useRouter();
   const { toast } = useToast();
-
-  useEffect(() => {
-    if(cartItems.length === 0) {
-      router.push('/products');
-    }
-  }, [cartItems, router]);
 
   const form = useForm<z.infer<typeof checkoutSchema>>({
     resolver: zodResolver(checkoutSchema),
@@ -47,6 +45,51 @@ export default function CheckoutPage() {
       paymentMethod: "cod",
     },
   });
+
+  useEffect(() => {
+    if(!loading && !user) {
+        router.replace('/login?redirect=/checkout');
+    }
+  }, [user, loading, router]);
+  
+  useEffect(() => {
+    if(userData) {
+      form.reset({
+        name: userData.name,
+        phone: userData.phone,
+        address: userData.address?.street,
+        pincode: userData.address?.pincode,
+        city: userData.address?.city,
+        paymentMethod: 'cod'
+      })
+    }
+  }, [userData, form]);
+
+
+  useEffect(() => {
+    // Redirect if cart is empty after auth check is complete
+    if(!loading && cartItems.length === 0) {
+      router.replace('/products');
+    }
+  }, [cartItems, router, loading]);
+
+  if (loading || !user) {
+    return (
+        <div className="container mx-auto px-4 py-12">
+            <Skeleton className="h-10 w-48 mx-auto mb-12" />
+            <div className="grid md:grid-cols-2 gap-12">
+                <div className="space-y-6">
+                    <Skeleton className="h-64 w-full" />
+                    <Skeleton className="h-32 w-full" />
+                    <Skeleton className="h-48 w-full" />
+                </div>
+                <div>
+                    <Skeleton className="h-96 w-full sticky top-24" />
+                </div>
+            </div>
+        </div>
+    );
+  }
 
   function onSubmit(values: z.infer<typeof checkoutSchema>) {
     console.log("Order placed:", values);
@@ -56,10 +99,6 @@ export default function CheckoutPage() {
     });
     clearCart();
     router.push('/order-confirmation');
-  }
-
-  if (cartItems.length === 0) {
-    return null; // or a loading spinner
   }
 
   const grandTotal = cartTotal + DELIVERY_CHARGE;
@@ -181,7 +220,9 @@ export default function CheckoutPage() {
                          <Separator className="my-2" />
                          <div className="flex justify-between font-bold text-lg"><p>Total</p><p>₹{grandTotal.toFixed(2)}</p></div>
                     </div>
-                    <Button type="submit" size="lg" className="w-full mt-6">Place Order</Button>
+                    <Button type="submit" size="lg" className="w-full mt-6" disabled={form.formState.isSubmitting}>
+                      {form.formState.isSubmitting ? 'Placing Order...' : 'Place Order'}
+                    </Button>
                 </CardContent>
              </Card>
           </div>
