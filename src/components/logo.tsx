@@ -9,7 +9,7 @@ export function Logo({ className, inFooter = false }: { className?: string; inFo
       <Drumstick className={cn("h-7 w-7", inFooter ? "text-primary-foreground" : "text-primary")} />
       <span className={cn(
         "text-xl font-bold tracking-tight",
-        inFooter ? "text-primary-foreground" : "text-foreground"
+        inFooter ? "text-primary-foreground" : "text-primary"
       )}>
         {SHOP_NAME}
       </span>

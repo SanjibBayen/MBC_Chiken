@@ -1,3 +1,4 @@
+
 "use client";
 
 import Link from "next/link";
@@ -10,6 +11,8 @@ import { Logo } from "./logo";
 import { useCart } from "@/hooks/use-cart";
 import { CartSheet } from "./cart-sheet";
 import { useEffect, useState } from "react";
+import { cn } from "@/lib/utils";
+import { usePathname } from "next/navigation";
 
 const navLinks = [
   { href: "/", label: "Home" },
@@ -20,17 +23,7 @@ const navLinks = [
 
 function ClientOnlyCart() {
   const { cartCount, isCartOpen, setIsCartOpen } = useCart();
-  const [isMounted, setIsMounted] = useState(false);
-
-  useEffect(() => {
-    setIsMounted(true);
-  }, []);
-
-  if (!isMounted) {
-    // Render a placeholder on the server to prevent layout shift
-    return <Button variant="ghost" size="icon" className="relative w-10 h-10" disabled />;
-  }
-
+  
   return (
       <Sheet open={isCartOpen} onOpenChange={setIsCartOpen}>
         <SheetTrigger asChild>
@@ -54,14 +47,35 @@ function ClientOnlyCart() {
   )
 }
 
+function NavLink({ href, label }: { href: string; label: string }) {
+  const pathname = usePathname();
+  const isActive = pathname === href;
+
+  return (
+    <Link
+      href={href}
+      className={cn(
+        "transition-colors font-medium text-foreground/60 hover:text-foreground",
+        isActive && "text-primary font-semibold"
+      )}
+    >
+      {label}
+    </Link>
+  );
+}
+
+
 export function Header() {
+  const [isMounted, setIsMounted] = useState(false);
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container flex h-16 items-center">
-        <div className="mr-4 hidden md:flex">
-          <Logo />
-        </div>
-
+        {/* Mobile Menu */}
         <div className="md:hidden">
           <Sheet>
             <SheetTrigger asChild>
@@ -70,14 +84,16 @@ export function Header() {
                 <span className="sr-only">Toggle Menu</span>
               </Button>
             </SheetTrigger>
-            <SheetContent side="left">
-              <Logo />
-              <nav className="mt-8 flex flex-col gap-4">
+            <SheetContent side="left" className="w-full max-w-xs">
+              <div className="p-4">
+                <Logo />
+              </div>
+              <nav className="mt-4 flex flex-col gap-4 px-4">
                 {navLinks.map((link) => (
                   <Link
                     key={link.href}
                     href={link.href}
-                    className="text-lg font-medium text-foreground/80 hover:text-foreground"
+                    className="text-lg font-medium text-foreground/80 hover:text-primary"
                   >
                     {link.label}
                   </Link>
@@ -87,19 +103,17 @@ export function Header() {
           </Sheet>
         </div>
 
-        <nav className="ml-6 hidden md:flex items-center gap-6 text-sm">
-          {navLinks.map((link) => (
-            <Link
-              key={link.href}
-              href={link.href}
-              className="transition-colors font-medium text-foreground/60 hover:text-foreground"
-            >
-              {link.label}
-            </Link>
-          ))}
-        </nav>
+        {/* Desktop Logo & Nav */}
+        <div className="hidden md:flex items-center gap-8">
+          <Logo />
+           <nav className="flex items-center gap-6 text-sm">
+              {navLinks.map((link) => (
+                <NavLink key={link.href} {...link} />
+              ))}
+            </nav>
+        </div>
 
-        <div className="flex flex-1 items-center justify-end gap-2">
+        <div className="ml-auto flex items-center gap-2">
           <div className="relative hidden sm:block w-full max-w-xs">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <Input placeholder="Search products..." className="pl-9" />
@@ -111,7 +125,7 @@ export function Header() {
               <span className="sr-only">Login</span>
             </Link>
           </Button>
-          <ClientOnlyCart />
+          {isMounted ? <ClientOnlyCart /> : <Button variant="ghost" size="icon" className="relative w-10 h-10" disabled />}
         </div>
       </div>
     </header>
