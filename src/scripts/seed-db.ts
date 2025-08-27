@@ -9,7 +9,7 @@ const firebaseConfig = {
   projectId: "mbc-chicken-express",
   appId: "1:467979805218:web:e03c809a9537082c6a207b",
   storageBucket: "mbc-chicken-express.firebasestorage.app",
-  apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY || "AIzaSyBQwKZHnPA-M8jmgci50rpGeXyJ5G71i70",
+  apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
   authDomain: "mbc-chicken-express.firebaseapp.com",
   messagingSenderId: "467979805218"
 };
