@@ -27,7 +27,8 @@ function ClientOnlyCart() {
   }, []);
 
   if (!isMounted) {
-    return <div className="h-10 w-10" />; // Placeholder to prevent layout shift
+    // Render a placeholder on the server to prevent layout shift
+    return <Button variant="ghost" size="icon" className="relative w-10 h-10" disabled />;
   }
 
   return (
@@ -37,7 +38,7 @@ function ClientOnlyCart() {
             <ShoppingCart className="h-5 w-5" />
             {cartCount > 0 && (
               <Badge
-                variant="default"
+                variant="destructive"
                 className="absolute -right-2 -top-2 h-5 w-5 justify-center rounded-full p-0"
               >
                 {cartCount}
@@ -91,7 +92,7 @@ export function Header() {
             <Link
               key={link.href}
               href={link.href}
-              className="transition-colors text-foreground/60 hover:text-foreground/80"
+              className="transition-colors font-medium text-foreground/60 hover:text-foreground"
             >
               {link.label}
             </Link>

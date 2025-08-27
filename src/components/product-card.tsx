@@ -28,7 +28,7 @@ export function ProductCard({ product }: ProductCardProps) {
   };
 
   return (
-    <Card className="group flex flex-col overflow-hidden transition-all duration-300 hover:shadow-xl hover:-translate-y-1">
+    <Card className="group flex flex-col overflow-hidden transition-all duration-300 hover:shadow-xl hover:-translate-y-1 bg-card">
       <CardHeader className="p-0">
         <Link href={`/products/${product.slug}`} className="block overflow-hidden">
           <Image
@@ -42,23 +42,23 @@ export function ProductCard({ product }: ProductCardProps) {
         </Link>
       </CardHeader>
       <CardContent className="flex-1 p-4">
+        <p className="text-sm text-muted-foreground">{product.category}</p>
         <Link href={`/products/${product.slug}`}>
-          <CardTitle className="text-base font-bold leading-tight group-hover:text-primary">
+          <CardTitle className="text-lg font-semibold leading-tight group-hover:text-primary mt-1">
             {product.name}
           </CardTitle>
         </Link>
-        <p className="mt-1 text-sm text-muted-foreground">{product.category}</p>
       </CardContent>
       <CardFooter className="p-4 pt-0 flex justify-between items-center">
-        <p className="text-lg font-semibold text-primary">₹{defaultVariant.price}</p>
+        <p className="text-xl font-bold text-primary">₹{defaultVariant.price}</p>
         {product.variants.length > 1 ? (
           <Button asChild variant="outline" size="sm">
-            <Link href={`/products/${product.slug}`}>View Options</Link>
+            <Link href={`/products/${product.slug}`}>Select</Link>
           </Button>
         ) : (
           <Button size="sm" onClick={handleAddToCart}>
             <ShoppingCart className="mr-2 h-4 w-4" />
-            Add to Cart
+            Add
           </Button>
         )}
       </CardFooter>
