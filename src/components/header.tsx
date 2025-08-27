@@ -9,6 +9,7 @@ import { Menu, Search, ShoppingCart, User } from "lucide-react";
 import { Logo } from "./logo";
 import { useCart } from "@/hooks/use-cart";
 import { CartSheet } from "./cart-sheet";
+import { useEffect, useState } from "react";
 
 const navLinks = [
   { href: "/", label: "Home" },
@@ -17,9 +18,42 @@ const navLinks = [
   { href: "/contact", label: "Contact" },
 ];
 
-export function Header() {
+function ClientOnlyCart() {
   const { cartCount, isCartOpen, setIsCartOpen } = useCart();
+  const [isMounted, setIsMounted] = useState(false);
 
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
+  if (!isMounted) {
+    return <div className="h-10 w-10" />; // Placeholder to prevent layout shift
+  }
+
+  return (
+      <Sheet open={isCartOpen} onOpenChange={setIsCartOpen}>
+        <SheetTrigger asChild>
+          <Button variant="ghost" size="icon" className="relative">
+            <ShoppingCart className="h-5 w-5" />
+            {cartCount > 0 && (
+              <Badge
+                variant="default"
+                className="absolute -right-2 -top-2 h-5 w-5 justify-center rounded-full p-0"
+              >
+                {cartCount}
+              </Badge>
+            )}
+            <span className="sr-only">Open Cart</span>
+          </Button>
+        </SheetTrigger>
+        <SheetContent className="w-full sm:max-w-md">
+          <CartSheet />
+        </SheetContent>
+      </Sheet>
+  )
+}
+
+export function Header() {
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container flex h-16 items-center">
@@ -76,26 +110,7 @@ export function Header() {
               <span className="sr-only">Login</span>
             </Link>
           </Button>
-
-          <Sheet open={isCartOpen} onOpenChange={setIsCartOpen}>
-            <SheetTrigger asChild>
-              <Button variant="ghost" size="icon" className="relative">
-                <ShoppingCart className="h-5 w-5" />
-                {cartCount > 0 && (
-                  <Badge
-                    variant="default"
-                    className="absolute -right-2 -top-2 h-5 w-5 justify-center rounded-full p-0"
-                  >
-                    {cartCount}
-                  </Badge>
-                )}
-                <span className="sr-only">Open Cart</span>
-              </Button>
-            </SheetTrigger>
-            <SheetContent className="w-full sm:max-w-md">
-              <CartSheet />
-            </SheetContent>
-          </Sheet>
+          <ClientOnlyCart />
         </div>
       </div>
     </header>
