@@ -144,12 +144,11 @@ export function Header() {
                 <span>Kolkata</span>
                 <ChevronDown className="h-4 w-4" />
              </div>
-             <p className="text-xs text-muted-foreground max-w-xs truncate">{SHOP_ADDRESS}</p>
            </div>
         </div>
 
         {/* Search Bar (Centered) */}
-        <div className="flex-1 w-full max-w-xl hidden md:block">
+        <div className="flex-1 w-full max-w-2xl hidden md:block">
             <div className="relative">
                 <Input placeholder="Search for any delicious product..." className="pl-4 pr-10 h-11" />
                 <Button variant="ghost" size="icon" className="absolute right-1 top-1/2 -translate-y-1/2 h-8 w-8">
