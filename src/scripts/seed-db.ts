@@ -5,19 +5,24 @@ import { initializeApp } from 'firebase/app';
 import { getFirestore, collection, writeBatch, doc } from 'firebase/firestore';
 import { PRODUCTS_TO_SEED } from '../lib/products';
 
+const projectId = process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID || "mbc-chicken-express";
+
 const firebaseConfig = {
-  projectId: "mbc-chicken-express",
-  appId: "1:467979805218:web:e03c809a9537082c6a207b",
-  storageBucket: "mbc-chicken-express.firebasestorage.app",
+  projectId: projectId,
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
-  authDomain: "mbc-chicken-express.firebaseapp.com",
-  messagingSenderId: "467979805218"
 };
+
+// Check if all required environment variables are set
+if (!firebaseConfig.apiKey) {
+    console.error("Firebase API key is not set. Please check your .env.local file.");
+    process.exit(1);
+}
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
 async function seedDatabase() {
+  console.log(`Connecting to Firebase project: ${projectId}`);
   const productsCollection = collection(db, 'products');
   const batch = writeBatch(db);
 
@@ -38,4 +43,7 @@ async function seedDatabase() {
 
 seedDatabase().then(() => {
     process.exit(0);
+}).catch(err => {
+    console.error("An unexpected error occurred during seeding:", err);
+    process.exit(1);
 });

@@ -1,14 +1,13 @@
+
 import { initializeApp, getApps, getApp } from 'firebase/app';
 import { getFirestore } from 'firebase/firestore';
 import { getAuth } from 'firebase/auth';
 
 const firebaseConfig = {
-  projectId: "mbc-chicken-express",
-  appId: "1:467979805218:web:e03c809a9537082c6a207b",
-  storageBucket: "mbc-chicken-express.firebasestorage.app",
+  projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID || "mbc-chicken-express",
   apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
-  authDomain: "mbc-chicken-express.firebaseapp.com",
-  messagingSenderId: "467979805218"
+  authDomain: `${process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID}.firebaseapp.com`,
+  storageBucket: `${process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID}.appspot.com`,
 };
 
 const app = !getApps().length ? initializeApp(firebaseConfig) : getApp();
