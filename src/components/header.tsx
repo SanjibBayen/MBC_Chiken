@@ -6,13 +6,14 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-import { Menu, Search, ShoppingCart, User, MapPin, ChevronDown, Drumstick, Layers, Phone } from "lucide-react";
+import { Menu, Search, ShoppingCart, User, MapPin, ChevronDown, Layers, Phone } from "lucide-react";
 import { Logo } from "./logo";
 import { useCart } from "@/hooks/use-cart";
 import { useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
 import { usePathname } from "next/navigation";
 import { SHOP_ADDRESS, SHOP_NAME, CONTACT_PHONE, SHOP_SLOGAN } from "@/lib/constants";
+import { CartSheet } from "@/components/cart-sheet";
 
 const navLinks = [
   { href: "/", label: "Home" },
