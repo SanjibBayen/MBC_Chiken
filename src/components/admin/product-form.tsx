@@ -254,7 +254,7 @@ export function ProductForm({ initialData }: ProductFormProps) {
                  <Button
                     type="button"
                     variant="outline"
-                    onClick={() => appendVariant({ name: '', price: 0, stock: 0, pieces: '', serves: 0 })}
+                    onClick={() => appendVariant({ name: '', price: 0, originalPrice: 0, stock: 0, pieces: '', serves: 0 })}
                     >
                     Add Variant
                 </Button>
