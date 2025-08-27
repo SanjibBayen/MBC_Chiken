@@ -14,13 +14,7 @@ import { cn } from "@/lib/utils";
 import { usePathname } from "next/navigation";
 import { SHOP_ADDRESS, SHOP_NAME, CONTACT_PHONE, SHOP_SLOGAN } from "@/lib/constants";
 import { CartSheet } from "@/components/cart-sheet";
-
-const navLinks = [
-  { href: "/", label: "Home" },
-  { href: "/products", label: "Products" },
-  { href: "/about", label: "About Us" },
-  { href: "/contact", label: "Contact" },
-];
+import { CategoryMenu } from "./category-menu";
 
 function ClientOnlyCart() {
   const { cartCount, isCartOpen, setIsCartOpen } = useCart();
@@ -51,33 +45,21 @@ function ClientOnlyCart() {
   )
 }
 
-function NavLink({ href, label, icon: Icon }: { href: string; label: string; icon: React.ElementType }) {
-  const pathname = usePathname();
-  const isActive = pathname === href;
-
-  return (
-     <Button asChild variant="ghost" className="hidden md:flex">
-        <Link
-        href={href}
-        className={cn(
-            "flex items-center gap-2 transition-colors hover:text-primary",
-            isActive && "text-primary font-semibold"
-        )}
-        >
-        <Icon className="h-6 w-6" />
-        {label}
-        </Link>
-     </Button>
-  );
-}
-
 
 export function Header() {
   const [isMounted, setIsMounted] = useState(false);
+  const pathname = usePathname();
 
   useEffect(() => {
     setIsMounted(true);
   }, []);
+
+  const navLinks = [
+    { href: "/", label: "Home" },
+    { href: "/products", label: "Products" },
+    { href: "/about", label: "About Us" },
+    { href: "/contact", label: "Contact" },
+  ];
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -88,7 +70,7 @@ export function Header() {
                 <Phone className="h-3 w-3" />
                 <span>{CONTACT_PHONE}</span>
             </div>
-            <span>{SHOP_SLOGAN}</span>
+            <span className="font-medium tracking-wide">{SHOP_SLOGAN}</span>
          </div>
        </div>
 
@@ -111,7 +93,10 @@ export function Header() {
                   <Link
                     key={link.href}
                     href={link.href}
-                    className="text-lg font-medium text-foreground/80 hover:text-primary"
+                    className={cn(
+                        "text-lg font-medium hover:text-primary",
+                        pathname === link.href ? "text-primary" : "text-foreground/80"
+                    )}
                   >
                     {link.label}
                   </Link>
@@ -125,7 +110,7 @@ export function Header() {
         <div className="hidden md:flex items-center gap-4">
           <Logo />
            <div className="border-l pl-4">
-             <div className="flex items-center gap-1 font-bold">
+             <div className="flex items-center gap-1 font-bold text-sm cursor-pointer hover:text-primary">
                 <MapPin className="h-4 w-4 text-primary"/>
                 <span>Kolkata</span>
                 <ChevronDown className="h-4 w-4" />
@@ -145,7 +130,7 @@ export function Header() {
         </div>
 
         <div className="flex items-center gap-1">
-            <NavLink href="/products" label="Categories" icon={Layers} />
+            <CategoryMenu />
             <Button asChild variant="ghost" className="flex items-center gap-2 px-2 hover:bg-transparent">
                 <Link href="/account">
                 <User className="h-6 w-6" />
@@ -153,7 +138,7 @@ export function Header() {
                 </Link>
             </Button>
           
-          {isMounted ? <ClientOnlyCart /> : <Button variant="ghost" size="icon" className="relative w-10 h-10" disabled />}
+          {isMounted ? <ClientOnlyCart /> : <Button variant="ghost" className="relative flex items-center gap-2 px-2 hover:bg-transparent" disabled><ShoppingCart className="h-6 w-6" /><span className="hidden md:block">Cart</span></Button>}
         </div>
       </div>
        <div className="container pb-2 md:hidden">
