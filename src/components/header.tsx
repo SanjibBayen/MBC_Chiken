@@ -6,13 +6,13 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-import { Menu, Search, ShoppingCart, User } from "lucide-react";
+import { Menu, Search, ShoppingCart, User, MapPin, ChevronDown, Drumstick, Layers, Phone } from "lucide-react";
 import { Logo } from "./logo";
 import { useCart } from "@/hooks/use-cart";
-import { CartSheet } from "./cart-sheet";
 import { useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
 import { usePathname } from "next/navigation";
+import { SHOP_ADDRESS, SHOP_NAME, CONTACT_PHONE, SHOP_SLOGAN } from "@/lib/constants";
 
 const navLinks = [
   { href: "/", label: "Home" },
@@ -27,16 +27,19 @@ function ClientOnlyCart() {
   return (
       <Sheet open={isCartOpen} onOpenChange={setIsCartOpen}>
         <SheetTrigger asChild>
-          <Button variant="ghost" size="icon" className="relative">
-            <ShoppingCart className="h-5 w-5" />
-            {cartCount > 0 && (
-              <Badge
-                variant="destructive"
-                className="absolute -right-2 -top-2 h-5 w-5 justify-center rounded-full p-0"
-              >
-                {cartCount}
-              </Badge>
-            )}
+          <Button variant="ghost" className="relative flex items-center gap-2 px-2 hover:bg-transparent">
+             <div className="relative">
+                <ShoppingCart className="h-6 w-6" />
+                {cartCount > 0 && (
+                <Badge
+                    variant="destructive"
+                    className="absolute -right-2 -top-2 h-5 w-5 justify-center rounded-full p-0"
+                >
+                    {cartCount}
+                </Badge>
+                )}
+             </div>
+             <span className="hidden md:block">Cart</span>
             <span className="sr-only">Open Cart</span>
           </Button>
         </SheetTrigger>
@@ -47,20 +50,23 @@ function ClientOnlyCart() {
   )
 }
 
-function NavLink({ href, label }: { href: string; label: string }) {
+function NavLink({ href, label, icon: Icon }: { href: string; label: string; icon: React.ElementType }) {
   const pathname = usePathname();
   const isActive = pathname === href;
 
   return (
-    <Link
-      href={href}
-      className={cn(
-        "transition-colors font-medium text-foreground/60 hover:text-foreground",
-        isActive && "text-primary font-semibold"
-      )}
-    >
-      {label}
-    </Link>
+     <Button asChild variant="ghost" className="hidden md:flex">
+        <Link
+        href={href}
+        className={cn(
+            "flex items-center gap-2 transition-colors hover:text-primary",
+            isActive && "text-primary font-semibold"
+        )}
+        >
+        <Icon className="h-6 w-6" />
+        {label}
+        </Link>
+     </Button>
   );
 }
 
@@ -74,9 +80,20 @@ export function Header() {
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-      <div className="container flex h-16 items-center">
-        {/* Mobile Menu */}
-        <div className="md:hidden">
+        {/* Top bar */}
+       <div className="bg-foreground text-background text-xs py-1.5">
+         <div className="container flex justify-between items-center">
+            <div className="flex items-center gap-2">
+                <Phone className="h-3 w-3" />
+                <span>{CONTACT_PHONE}</span>
+            </div>
+            <span>{SHOP_SLOGAN}</span>
+         </div>
+       </div>
+
+      <div className="container flex h-20 items-center justify-between gap-6">
+        {/* Mobile Menu & Logo */}
+        <div className="flex items-center md:hidden">
           <Sheet>
             <SheetTrigger asChild>
               <Button variant="ghost" size="icon">
@@ -103,31 +120,49 @@ export function Header() {
           </Sheet>
         </div>
 
-        {/* Desktop Logo & Nav */}
-        <div className="hidden md:flex items-center gap-8">
+        {/* Desktop Logo & Location */}
+        <div className="hidden md:flex items-center gap-4">
           <Logo />
-           <nav className="flex items-center gap-6 text-sm">
-              {navLinks.map((link) => (
-                <NavLink key={link.href} {...link} />
-              ))}
-            </nav>
+           <div className="border-l pl-4">
+             <div className="flex items-center gap-1 font-bold">
+                <MapPin className="h-4 w-4 text-primary"/>
+                <span>Kolkata</span>
+                <ChevronDown className="h-4 w-4" />
+             </div>
+             <p className="text-xs text-muted-foreground max-w-xs truncate">{SHOP_ADDRESS}</p>
+           </div>
         </div>
 
-        <div className="ml-auto flex items-center gap-2">
-          <div className="relative hidden sm:block w-full max-w-xs">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-            <Input placeholder="Search products..." className="pl-9" />
-          </div>
+        {/* Search Bar (Centered) */}
+        <div className="flex-1 w-full max-w-xl hidden md:block">
+            <div className="relative">
+                <Input placeholder="Search for any delicious product..." className="pl-4 pr-10 h-11" />
+                <Button variant="ghost" size="icon" className="absolute right-1 top-1/2 -translate-y-1/2 h-8 w-8">
+                     <Search className="h-5 w-5 text-muted-foreground" />
+                </Button>
+            </div>
+        </div>
+
+        <div className="flex items-center gap-1">
+            <NavLink href="/products" label="Categories" icon={Layers} />
+            <Button asChild variant="ghost" className="flex items-center gap-2 px-2 hover:bg-transparent">
+                <Link href="/account">
+                <User className="h-6 w-6" />
+                <span className="hidden md:block">Login</span>
+                </Link>
+            </Button>
           
-          <Button asChild variant="ghost" size="icon">
-            <Link href="/account">
-              <User className="h-5 w-5" />
-              <span className="sr-only">Login</span>
-            </Link>
-          </Button>
           {isMounted ? <ClientOnlyCart /> : <Button variant="ghost" size="icon" className="relative w-10 h-10" disabled />}
         </div>
       </div>
+       <div className="container pb-2 md:hidden">
+         <div className="relative">
+            <Input placeholder="Search for any delicious product..." className="pl-4 pr-10 h-11" />
+            <Button variant="ghost" size="icon" className="absolute right-1 top-1/2 -translate-y-1/2 h-8 w-8">
+                    <Search className="h-5 w-5 text-muted-foreground" />
+            </Button>
+        </div>
+       </div>
     </header>
   );
 }
