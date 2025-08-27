@@ -8,7 +8,6 @@ import {
   ShoppingCart,
   Package,
   Users,
-  LineChart,
   PanelLeft,
 } from 'lucide-react';
 import {
@@ -23,7 +22,6 @@ import {
   SidebarTrigger,
 } from '@/components/ui/sidebar';
 import { Logo } from '@/components/logo';
-import { Button } from '@/components/ui/button';
 import {
   Tooltip,
   TooltipContent,
@@ -45,8 +43,11 @@ export default function AdminLayout({
   const pathname = usePathname();
   
   const getPageTitle = () => {
-    if (pathname.startsWith('/admin/products/')) return 'Manage Product';
-    return adminNavLinks.find(l => pathname.startsWith(l.href))?.label || 'Admin';
+    // Handle dynamic routes like /admin/products/edit/[id]
+    if (pathname.startsWith('/admin/products/edit/')) return 'Edit Product';
+    if (pathname.startsWith('/admin/products/new')) return 'New Product';
+
+    return adminNavLinks.find(l => pathname === l.href)?.label || 'Admin';
   }
 
   return (
@@ -64,10 +65,7 @@ export default function AdminLayout({
                     <TooltipTrigger asChild>
                       <Link href={link.href}>
                         <SidebarMenuButton
-                          isActive={pathname.startsWith(link.href)}
-                          tooltip={{
-                            children: link.label,
-                          }}
+                          isActive={pathname === link.href}
                         >
                           <link.icon />
                           <span>{link.label}</span>

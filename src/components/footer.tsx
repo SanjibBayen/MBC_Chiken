@@ -1,3 +1,4 @@
+
 import { CONTACT_EMAIL, CONTACT_PHONE, SHOP_ADDRESS, SHOP_NAME } from "@/lib/constants";
 import { Facebook, Instagram, Twitter } from "lucide-react";
 import Link from "next/link";
@@ -40,7 +41,6 @@ export function Footer() {
               <li><a href="#" className="text-muted-foreground hover:text-primary-foreground">Privacy Policy</a></li>
               <li><a href="#" className="text-muted-foreground hover:text-primary-foreground">Terms of Service</a></li>
               <li><a href="#" className="text-muted-foreground hover:text-primary-foreground">Refund Policy</a></li>
-               <li><Link href="/admin" className="text-muted-foreground hover:text-primary-foreground">Admin Login</Link></li>
             </ul>
             <p className="text-xs text-muted-foreground/60 mt-4">No refund after delivery.</p>
           </div>

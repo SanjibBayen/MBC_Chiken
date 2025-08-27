@@ -19,18 +19,19 @@ import { useEffect, useState } from 'react';
 import { OrderService } from '@/services/order-service';
 import type { Order } from '@/lib/types';
 import { ProductService } from '@/services/product-service';
+import { Skeleton } from '@/components/ui/skeleton';
 
 const chartData = [
-  { month: 'January', desktop: 186 },
-  { month: 'February', desktop: 305 },
-  { month: 'March', desktop: 237 },
-  { month: 'April', desktop: 73 },
-  { month: 'May', desktop: 209 },
-  { month: 'June', desktop: 214 },
+  { month: 'January', sales: 18600 },
+  { month: 'February', sales: 30500 },
+  { month: 'March', sales: 23700 },
+  { month: 'April', sales: 7300 },
+  { month: 'May', sales: 20900 },
+  { month: 'June', sales: 21400 },
 ];
 
 const chartConfig = {
-  desktop: {
+  sales: {
     label: 'Sales',
     color: 'hsl(var(--primary))',
   },
@@ -39,20 +40,28 @@ const chartConfig = {
 export default function AdminDashboardPage() {
   const [orders, setOrders] = useState<Order[]>([]);
   const [totalProducts, setTotalProducts] = useState(0);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const fetchData = async () => {
+        setIsLoading(true);
         const [ordersData, productsData] = await Promise.all([
             OrderService.getOrders(),
             ProductService.getProducts()
         ]);
         setOrders(ordersData);
         setTotalProducts(productsData.length);
+        setIsLoading(false);
     }
     fetchData();
   }, []);
 
   const totalRevenue = orders.reduce((sum, order) => sum + order.total, 0);
+  const totalDeliveredOrders = orders.filter(o => o.status === 'Delivered').length;
+
+  if (isLoading) {
+    return <DashboardSkeleton />
+  }
 
   return (
     <div className="flex flex-col gap-8 py-6">
@@ -65,19 +74,19 @@ export default function AdminDashboardPage() {
           <CardContent>
             <div className="text-2xl font-bold">₹{totalRevenue.toFixed(2)}</div>
             <p className="text-xs text-muted-foreground">
-              Based on all-time orders
+              Based on {orders.length} all-time orders
             </p>
           </CardContent>
         </Card>
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Orders</CardTitle>
+            <CardTitle className="text-sm font-medium">Orders Delivered</CardTitle>
             <ShoppingCart className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">+{orders.length}</div>
+            <div className="text-2xl font-bold">+{totalDeliveredOrders}</div>
             <p className="text-xs text-muted-foreground">
-              All-time completed orders
+              Out of {orders.length} total orders
             </p>
           </CardContent>
         </Card>
@@ -95,12 +104,12 @@ export default function AdminDashboardPage() {
         </Card>
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Active Now</CardTitle>
+            <CardTitle className="text-sm font-medium">New Customers</CardTitle>
             <Users className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">+573</div>
-            <p className="text-xs text-muted-foreground">+201 since last hour</p>
+            <div className="text-2xl font-bold">+25</div>
+            <p className="text-xs text-muted-foreground">+5 since last month</p>
           </CardContent>
         </Card>
       </div>
@@ -120,12 +129,14 @@ export default function AdminDashboardPage() {
                   tickMargin={10}
                   axisLine={false}
                 />
-                <YAxis />
+                <YAxis
+                  tickFormatter={(value) => `₹${Number(value) / 1000}k`}
+                />
                 <ChartTooltip
                   cursor={false}
-                  content={<ChartTooltipContent />}
+                  content={<ChartTooltipContent formatter={(value) => `₹${value}`} />}
                 />
-                <Bar dataKey="desktop" fill="var(--color-desktop)" radius={4} />
+                <Bar dataKey="sales" fill="var(--color-sales)" radius={4} />
               </BarChart>
             </ChartContainer>
           </CardContent>
@@ -133,4 +144,26 @@ export default function AdminDashboardPage() {
       </div>
     </div>
   );
+}
+
+
+function DashboardSkeleton() {
+  return (
+     <div className="flex flex-col gap-8 py-6">
+      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+        <Card><CardHeader><Skeleton className="h-5 w-3/4" /></CardHeader><CardContent><Skeleton className="h-8 w-1/2" /><Skeleton className="h-4 w-full mt-2" /></CardContent></Card>
+        <Card><CardHeader><Skeleton className="h-5 w-3/4" /></CardHeader><CardContent><Skeleton className="h-8 w-1/2" /><Skeleton className="h-4 w-full mt-2" /></CardContent></Card>
+        <Card><CardHeader><Skeleton className="h-5 w-3/4" /></CardHeader><CardContent><Skeleton className="h-8 w-1/2" /><Skeleton className="h-4 w-full mt-2" /></CardContent></Card>
+        <Card><CardHeader><Skeleton className="h-5 w-3/4" /></CardHeader><CardContent><Skeleton className="h-8 w-1/2" /><Skeleton className="h-4 w-full mt-2" /></CardContent></Card>
+      </div>
+       <div>
+        <Card>
+          <CardHeader><CardTitle><Skeleton className="h-6 w-48" /></CardTitle><CardDescription><Skeleton className="h-4 w-32 mt-2" /></CardDescription></CardHeader>
+          <CardContent>
+            <Skeleton className="h-[250px] w-full" />
+          </CardContent>
+        </Card>
+      </div>
+    </div>
+  )
 }
