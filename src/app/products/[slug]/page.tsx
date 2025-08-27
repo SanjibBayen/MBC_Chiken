@@ -13,9 +13,9 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { ProductCard } from "@/components/product-card";
 
-export default function ProductDetailPage({ params }: { params: { slug: string } }) {
+export default function ProductDetailPage({ params: { slug } }: { params: { slug: string } }) {
   const { addToCart } = useCart();
-  const product = PRODUCTS.find((p) => p.slug === params.slug);
+  const product = PRODUCTS.find((p) => p.slug === slug);
 
   if (!product) {
     notFound();
