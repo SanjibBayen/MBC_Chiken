@@ -18,7 +18,9 @@ import {
 } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
 import type { Order } from '@/lib/types';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { OrderService } from '@/services/order-service';
+import { Skeleton } from '@/components/ui/skeleton';
 
 const getStatusVariant = (status: Order['status']) => {
   switch (status) {
@@ -35,8 +37,17 @@ const getStatusVariant = (status: Order['status']) => {
 
 export default function AdminOrdersPage() {
   const [orders, setOrders] = useState<Order[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
-  // TODO: Fetch real orders from a service
+  useEffect(() => {
+    const fetchOrders = async () => {
+        setIsLoading(true);
+        const allOrders = await OrderService.getOrders();
+        setOrders(allOrders);
+        setIsLoading(false);
+    }
+    fetchOrders();
+  }, []);
 
   return (
     <Card>
@@ -58,10 +69,18 @@ export default function AdminOrdersPage() {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {orders.length > 0 ? (
+            {isLoading ? (
+                <TableRow>
+                    <TableCell colSpan={5} className="h-24 text-center">
+                       <div className="flex justify-center items-center">
+                        <Skeleton className="h-8 w-1/2" />
+                       </div>
+                    </TableCell>
+                </TableRow>
+            ) : orders.length > 0 ? (
               orders.map(order => (
                 <TableRow key={order.id}>
-                  <TableCell className="font-medium">{order.id}</TableCell>
+                  <TableCell className="font-medium">#{order.id.substring(0, 7)}</TableCell>
                   <TableCell>{order.deliveryAddress.name}</TableCell>
                   <TableCell>
                     {new Date(order.date).toLocaleDateString()}

@@ -35,17 +35,18 @@ export interface CartItem {
 }
 
 export interface Order {
-    id: string;
-    date: string;
-    items: CartItem[];
-    total: number;
-    status: 'Pending' | 'Processing' | 'Delivered' | 'Cancelled';
-    deliveryAddress: {
-        name: string;
-        address: string;
-        city: string;
-        pincode: string;
-        phone: string;
-    };
-    deliverySlot?: string;
+  id: string;
+  userId: string;
+  date: string;
+  items: CartItem[];
+  total: number;
+  status: 'Processing' | 'Delivered' | 'Cancelled';
+  deliveryAddress: {
+    name: string;
+    address: string;
+    city: string;
+    pincode: string;
+    phone: string;
+  };
+  deliverySlot?: string;
 }

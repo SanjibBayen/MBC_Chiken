@@ -20,6 +20,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useEffect } from "react";
 import { useAuth } from "@/hooks/use-auth";
 import { Skeleton } from "@/components/ui/skeleton";
+import { OrderService } from "@/services/order-service";
 
 const checkoutSchema = z.object({
   name: z.string().min(2, "Name is required"),
@@ -55,11 +56,11 @@ export default function CheckoutPage() {
   useEffect(() => {
     if(userData) {
       form.reset({
-        name: userData.name,
-        phone: userData.phone,
-        address: userData.address?.street,
-        pincode: userData.address?.pincode,
-        city: userData.address?.city,
+        name: userData.name || '',
+        phone: userData.phone || '',
+        address: userData.address?.street || '',
+        pincode: userData.address?.pincode || '',
+        city: userData.address?.city || '',
         paymentMethod: 'cod'
       })
     }
@@ -67,7 +68,6 @@ export default function CheckoutPage() {
 
 
   useEffect(() => {
-    // Redirect if cart is empty after auth check is complete
     if(!loading && cartItems.length === 0) {
       router.replace('/products');
     }
@@ -91,14 +91,39 @@ export default function CheckoutPage() {
     );
   }
 
-  function onSubmit(values: z.infer<typeof checkoutSchema>) {
-    console.log("Order placed:", values);
-    toast({
-      title: "Order Placed!",
-      description: "Thank you for your order. We've received it and will process it shortly.",
-    });
-    clearCart();
-    router.push('/order-confirmation');
+  async function onSubmit(values: z.infer<typeof checkoutSchema>) {
+    if (!user) {
+        toast({ variant: 'destructive', title: "Not logged in", description: "You must be logged in to place an order." });
+        return;
+    }
+    const grandTotal = cartTotal + DELIVERY_CHARGE;
+    try {
+        await OrderService.createOrder({
+            userId: user.uid,
+            items: cartItems,
+            total: grandTotal,
+            status: 'Processing',
+            deliveryAddress: {
+                name: values.name,
+                phone: values.phone,
+                address: values.address,
+                pincode: values.pincode,
+                city: values.city,
+            },
+            deliverySlot: values.deliverySlot,
+        });
+
+        toast({
+        title: "Order Placed!",
+        description: "Thank you for your order. We've received it and will process it shortly.",
+        });
+        clearCart();
+        router.push('/order-confirmation');
+
+    } catch (error) {
+        console.error("Failed to place order:", error);
+        toast({ variant: 'destructive', title: "Order Failed", description: "There was a problem placing your order. Please try again." });
+    }
   }
 
   const grandTotal = cartTotal + DELIVERY_CHARGE;
