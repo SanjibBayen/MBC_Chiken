@@ -9,7 +9,6 @@ import { Menu, Search, ShoppingCart } from "lucide-react";
 import { Logo } from "./logo";
 import { useCart } from "@/hooks/use-cart";
 import { CartSheet } from "./cart-sheet";
-import { useEffect, useState } from "react";
 
 const navLinks = [
   { href: "/", label: "Home" },
@@ -20,11 +19,6 @@ const navLinks = [
 
 export function Header() {
   const { cartCount, isCartOpen, setIsCartOpen } = useCart();
-  const [isMounted, setIsMounted] = useState(false);
-
-  useEffect(() => {
-    setIsMounted(true);
-  }, []);
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -80,7 +74,7 @@ export function Header() {
             <SheetTrigger asChild>
               <Button variant="ghost" size="icon" className="relative">
                 <ShoppingCart className="h-5 w-5" />
-                {isMounted && cartCount > 0 && (
+                {cartCount > 0 && (
                   <Badge
                     variant="default"
                     className="absolute -right-2 -top-2 h-5 w-5 justify-center rounded-full p-0"
