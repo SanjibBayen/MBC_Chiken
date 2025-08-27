@@ -26,7 +26,12 @@ export function CartProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     const storedCart = localStorage.getItem('mbc-cart');
     if (storedCart) {
-      setCartItems(JSON.parse(storedCart));
+      try {
+        setCartItems(JSON.parse(storedCart));
+      } catch (e) {
+        console.error("Failed to parse cart from localStorage", e);
+        // localStorage.removeItem('mbc-cart'); // Optional: clear corrupted cart data
+      }
     }
   }, []);
 
