@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState } from "react";
@@ -8,10 +9,11 @@ import { Button } from "@/components/ui/button";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import { useCart } from "@/hooks/use-cart";
-import { Star, Minus, Plus, ShoppingCart } from "lucide-react";
+import { Star, Minus, Plus, ShoppingCart, ChevronRight } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { ProductCard } from "@/components/product-card";
+import { Breadcrumbs } from "@/components/breadcrumbs";
 
 export default function ProductDetailPage({ params: { slug } }: { params: { slug: string } }) {
   const { addToCart } = useCart();
@@ -33,27 +35,35 @@ export default function ProductDetailPage({ params: { slug } }: { params: { slug
         variantName: selectedVariant.name,
         price: selectedVariant.price,
         image: product.images[0],
+        slug: product.slug,
       });
     }
   };
 
+  const breadcrumbItems = [
+    { label: "Home", href: "/" },
+    { label: product.category, href: "/products" },
+    { label: product.name },
+  ];
+
   return (
-    <div className="container mx-auto px-4 py-12">
-      <div className="grid md:grid-cols-2 gap-12">
+    <div className="container mx-auto px-4 py-8">
+      <Breadcrumbs items={breadcrumbItems} />
+      <div className="grid md:grid-cols-2 gap-12 mt-6">
         <div>
-          <div className="aspect-video relative rounded-lg overflow-hidden shadow-lg">
+          <div className="aspect-square relative rounded-lg overflow-hidden shadow-lg bg-white">
              <Image
                 src={product.images[0]}
                 alt={product.name}
                 fill
-                className="object-cover"
+                className="object-contain"
                 data-ai-hint="raw chicken"
               />
           </div>
         </div>
 
         <div>
-          <h1 className="text-3xl md:text-4xl font-bold font-headline text-primary">{product.name}</h1>
+          <h1 className="text-3xl md:text-4xl font-bold font-headline">{product.name}</h1>
           <p className="text-lg text-muted-foreground mt-2">{product.category}</p>
           <div className="flex items-center gap-2 mt-4">
             <div className="flex items-center">
@@ -81,10 +91,10 @@ export default function ProductDetailPage({ params: { slug } }: { params: { slug
                   <RadioGroupItem value={variant.name} id={variant.name} className="peer sr-only" />
                   <Label
                     htmlFor={variant.name}
-                    className="flex flex-col items-center justify-between rounded-md border-2 border-muted bg-popover p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary cursor-pointer"
+                    className="flex flex-col items-center justify-between rounded-md border-2 border-muted bg-popover p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary cursor-pointer min-w-[100px]"
                   >
                     <span>{variant.name}</span>
-                    <span className="font-bold">₹{variant.price}</span>
+                    <span className="font-bold mt-1">₹{variant.price}</span>
                   </Label>
                 </div>
               ))}
@@ -93,11 +103,11 @@ export default function ProductDetailPage({ params: { slug } }: { params: { slug
 
           <div className="mt-8 flex items-center gap-4">
              <div className="flex items-center gap-2 border rounded-md p-2">
-                <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => setQuantity(q => Math.max(1, q - 1))}><Minus className="h-4 w-4" /></Button>
-                <span className="w-8 text-center font-bold">{quantity}</span>
-                <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => setQuantity(q => q + 1)}><Plus className="h-4 w-4" /></Button>
+                <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => setQuantity(q => Math.max(1, q - 1))}><Minus className="h-4 w-4" /></Button>
+                <span className="w-8 text-center font-bold text-lg">{quantity}</span>
+                <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => setQuantity(q => q + 1)}><Plus className="h-4 w-4" /></Button>
              </div>
-             <Button size="lg" onClick={handleAddToCart} className="flex-1">
+             <Button size="lg" onClick={handleAddToCart} className="flex-1 h-12">
                 <ShoppingCart className="mr-2 h-5 w-5" />
                 Add to Cart
              </Button>
@@ -113,10 +123,10 @@ export default function ProductDetailPage({ params: { slug } }: { params: { slug
             <div className="space-y-6">
                 {product.reviews.length > 0 ? product.reviews.map(review => (
                     <Card key={review.id}>
-                        <CardHeader className="flex-row justify-between items-center">
+                        <CardHeader className="flex-row justify-between items-center pb-2">
                             <div>
                                 <CardTitle className="text-base">{review.author}</CardTitle>
-                                <p className="text-xs text-muted-foreground">{review.date}</p>
+                                <p className="text-xs text-muted-foreground">{new Date(review.date).toLocaleDateString()}</p>
                             </div>
                             <div className="flex items-center">
                                 {[...Array(5)].map((_, i) => (
