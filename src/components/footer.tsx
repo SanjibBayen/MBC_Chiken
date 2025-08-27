@@ -31,7 +31,7 @@ export function Footer() {
               <li><Link href="/products" className="text-accent-foreground/80 hover:text-primary-foreground">All Products</Link></li>
               <li><Link href="/about" className="text-accent-foreground/80 hover:text-primary-foreground">About Us</Link></li>
               <li><Link href="/contact" className="text-accent-foreground/80 hover:text-primary-foreground">Contact</Link></li>
-              <li><Link href="/account/orders" className="text-accent-foreground/80 hover:text-primary-foreground">My Orders</Link></li>
+              <li><Link href="/account" className="text-accent-foreground/80 hover:text-primary-foreground">My Account</Link></li>
             </ul>
           </div>
           <div>
@@ -40,6 +40,7 @@ export function Footer() {
               <li><a href="#" className="text-accent-foreground/80 hover:text-primary-foreground">Privacy Policy</a></li>
               <li><a href="#" className="text-accent-foreground/80 hover:text-primary-foreground">Terms of Service</a></li>
               <li><a href="#" className="text-accent-foreground/80 hover:text-primary-foreground">Refund Policy</a></li>
+               <li><Link href="/admin" className="text-accent-foreground/80 hover:text-primary-foreground">Admin Login</Link></li>
             </ul>
             <p className="text-xs text-accent-foreground/60 mt-4">No refund after delivery.</p>
           </div>

@@ -16,9 +16,9 @@ export default function AccountLayout({ children }: { children: ReactNode }) {
 
   return (
     <div className="container mx-auto px-4 py-12">
-      <h1 className="text-3xl font-bold font-headline text-primary mb-8">My Account</h1>
       <div className="grid md:grid-cols-4 gap-8">
         <nav className="md:col-span-1">
+           <h1 className="text-2xl font-bold font-headline text-primary mb-6">My Account</h1>
           <ul className="space-y-2">
             {accountNavLinks.map(link => (
               <li key={link.href}>
