@@ -6,10 +6,11 @@ export const PRODUCTS: Product[] = [
     name: 'Chicken Curry Cut - Small Pieces',
     slug: 'chicken-curry-cut-small',
     category: 'Fresh Cuts',
-    description: 'Freshly cut small pieces of chicken (approx. 50g each), perfect for traditional curries and stews. Hygienically packed and ready to cook.',
+    description: 'Tender, small pieces of chicken, perfect for quick curries and stir-fries. A fresh product, ideal for everyday cooking.',
     variants: [
       { name: '500g', price: 150, stock: 50 },
       { name: '1kg', price: 280, stock: 30 },
+      { name: '1.5kg', price: 420, stock: 20 },
     ],
     images: ['https://picsum.photos/600/400?random=1'],
     reviews: [
@@ -21,10 +22,11 @@ export const PRODUCTS: Product[] = [
     name: 'Chicken Curry Cut - Large Pieces',
     slug: 'chicken-curry-cut-large',
     category: 'Fresh Cuts',
-    description: 'Juicy, large pieces of chicken (approx. 100g each), ideal for hearty dishes like chicken korma or biryani. Skin-on for extra flavor.',
+    description: 'Hearty, large chunks of chicken for rich, flavorful dishes like biryani or stews. A fresh product for special meals.',
     variants: [
       { name: '500g', price: 160, stock: 45 },
       { name: '1kg', price: 300, stock: 25 },
+      { name: '1.5kg', price: 450, stock: 15 },
     ],
     images: ['https://picsum.photos/600/400?random=2'],
     reviews: [],
@@ -34,7 +36,7 @@ export const PRODUCTS: Product[] = [
     name: 'Chicken Keema (Mince)',
     slug: 'chicken-keema',
     category: 'Fresh Cuts',
-    description: 'Finely minced chicken meat, low in fat and high in protein. Perfect for making keema curry, patties, or stuffings.',
+    description: 'Finely minced chicken, versatile for patties, fillings, or keema curry. A fresh product that cooks quickly.',
     variants: [
       { name: '500g', price: 180, stock: 40 },
       { name: '1kg', price: 340, stock: 20 },
@@ -49,7 +51,7 @@ export const PRODUCTS: Product[] = [
     name: 'Chicken Drumsticks',
     slug: 'chicken-drumsticks',
     category: 'Fresh Cuts',
-    description: 'Succulent and meaty chicken drumsticks. A family favorite, great for frying, baking, or grilling. Comes with skin for a crispy finish.',
+    description: 'Juicy and flavorful chicken drumsticks, a favorite for grilling, frying, or baking. A fresh product for fun meals.',
     variants: [
       { name: '500g', price: 170, stock: 60 },
       { name: '1kg', price: 320, stock: 35 },
@@ -62,7 +64,7 @@ export const PRODUCTS: Product[] = [
     name: 'Chicken Breast - Boneless',
     slug: 'chicken-breast-boneless',
     category: 'Boneless',
-    description: 'Tender, boneless chicken breast fillets. A versatile and healthy option for a wide range of dishes, from salads to stir-fries.',
+    description: 'Lean and tender boneless chicken breast fillets. A fresh, healthy option perfect for grilling, salads, and sandwiches.',
     variants: [
       { name: '500g', price: 200, stock: 55 },
       { name: '1kg', price: 380, stock: 30 },
@@ -76,8 +78,8 @@ export const PRODUCTS: Product[] = [
     id: '6',
     name: 'Chicken Giblets (Liver, Stomach & Neck)',
     slug: 'chicken-giblets',
-    category: 'Specialty',
-    description: 'A mix of chicken liver, stomach (gizzard), and neck. Highly nutritious and flavorful, perfect for traditional recipes and broths.',
+    category: 'Organ Meats',
+    description: 'A combination of chicken liver, gizzard, and neck. A fresh product, rich in nutrients and ideal for traditional dishes.',
     variants: [
       { name: '500g', price: 120, stock: 30 },
     ],
@@ -86,10 +88,10 @@ export const PRODUCTS: Product[] = [
   },
   {
     id: '7',
-    name: 'Whole Chicken',
+    name: 'Whole Chicken (700g - 900g)',
     slug: 'whole-chicken',
     category: 'Specialty',
-    description: 'A whole chicken (700g to 900g), with skin. Ideal for roasting, grilling, or making a grand meal for the entire family.',
+    description: 'A fresh, whole chicken perfect for roasting or grilling. The centerpiece for any family feast or special occasion.',
     variants: [
       { name: '1 pc (700-900g)', price: 350, stock: 15 },
     ],
@@ -101,7 +103,7 @@ export const PRODUCTS: Product[] = [
     name: 'Chicken Leg - Boneless',
     slug: 'chicken-leg-boneless',
     category: 'Boneless',
-    description: 'Juicy and flavorful boneless chicken leg meat. Retains moisture well, making it perfect for tikkas, curries, and grilling.',
+    description: 'Succulent boneless chicken leg meat, known for its flavor and moisture. A fresh product, excellent for tikkas and curries.',
     variants: [
       { name: '500g', price: 210, stock: 40 },
       { name: '1kg', price: 400, stock: 20 },
@@ -114,7 +116,7 @@ export const PRODUCTS: Product[] = [
     name: 'Country Chicken (Desi)',
     slug: 'country-chicken',
     category: 'Specialty',
-    description: 'Authentic country chicken with a richer flavor and firmer texture. A premium choice for special occasions and traditional cooking.',
+    description: 'Authentic Desi chicken with a uniquely rich flavor and firm texture. A fresh, premium product for traditional recipes.',
     variants: [
       { name: '1kg', price: 550, stock: 10 },
     ],
@@ -126,7 +128,7 @@ export const PRODUCTS: Product[] = [
     name: 'Dog Food (Chicken)',
     slug: 'dog-food-chicken',
     category: 'More',
-    description: 'Specially prepared chicken parts suitable for pets. A healthy and natural source of protein for your furry friend.',
+    description: 'Freshly prepared chicken parts suitable for pets. A healthy and natural source of protein for your furry friend.',
     variants: [
       { name: '1kg', price: 150, stock: 50 },
     ],
@@ -138,7 +140,7 @@ export const PRODUCTS: Product[] = [
     name: 'Chicken Wings',
     slug: 'chicken-wings',
     category: 'Fresh Cuts',
-    description: 'The perfect party snack. Our chicken wings are available with or without skin, ready for your favorite marinade or sauce.',
+    description: 'The perfect appetizer or party snack. Fresh chicken wings, ready for your favorite sauce or marinade.',
     variants: [
       { name: '500g (With Skin)', price: 160, stock: 30 },
       { name: '500g (Without Skin)', price: 170, stock: 30 },
