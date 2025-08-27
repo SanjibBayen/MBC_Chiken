@@ -21,6 +21,8 @@ import type { Order } from '@/lib/types';
 import { useEffect, useState } from 'react';
 import { OrderService } from '@/services/order-service';
 import { Skeleton } from '@/components/ui/skeleton';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { useToast } from '@/hooks/use-toast';
 
 const getStatusVariant = (status: Order['status']) => {
   switch (status) {
@@ -38,6 +40,7 @@ const getStatusVariant = (status: Order['status']) => {
 export default function AdminOrdersPage() {
   const [orders, setOrders] = useState<Order[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const { toast } = useToast();
 
   useEffect(() => {
     const fetchOrders = async () => {
@@ -49,8 +52,30 @@ export default function AdminOrdersPage() {
     fetchOrders();
   }, []);
 
+  const handleStatusChange = async (orderId: string, newStatus: Order['status']) => {
+    try {
+        await OrderService.updateOrderStatus(orderId, newStatus);
+        setOrders(prevOrders => 
+            prevOrders.map(order => 
+                order.id === orderId ? { ...order, status: newStatus } : order
+            )
+        );
+        toast({
+            title: "Status Updated",
+            description: `Order #${orderId.substring(0, 7)} marked as ${newStatus}.`,
+        });
+    } catch (error) {
+        console.error("Failed to update status:", error);
+        toast({
+            variant: "destructive",
+            title: "Update Failed",
+            description: "Could not update the order status.",
+        });
+    }
+  }
+
   return (
-    <Card>
+    <Card className="mt-6">
       <CardHeader>
         <CardTitle>Manage Orders</CardTitle>
         <CardDescription>
@@ -70,13 +95,13 @@ export default function AdminOrdersPage() {
           </TableHeader>
           <TableBody>
             {isLoading ? (
-                <TableRow>
-                    <TableCell colSpan={5} className="h-24 text-center">
-                       <div className="flex justify-center items-center">
-                        <Skeleton className="h-8 w-1/2" />
-                       </div>
-                    </TableCell>
-                </TableRow>
+                [...Array(5)].map((_, i) => (
+                    <TableRow key={i}>
+                        <TableCell colSpan={5}>
+                            <Skeleton className="h-8 w-full" />
+                        </TableCell>
+                    </TableRow>
+                ))
             ) : orders.length > 0 ? (
               orders.map(order => (
                 <TableRow key={order.id}>
@@ -86,9 +111,21 @@ export default function AdminOrdersPage() {
                     {new Date(order.date).toLocaleDateString()}
                   </TableCell>
                   <TableCell>
-                    <Badge variant={getStatusVariant(order.status)}>
-                      {order.status}
-                    </Badge>
+                    <Select
+                      value={order.status}
+                      onValueChange={(newStatus) => handleStatusChange(order.id, newStatus as Order['status'])}
+                    >
+                      <SelectTrigger className="w-32 h-8">
+                        <SelectValue>
+                           <Badge variant={getStatusVariant(order.status)} className="capitalize">{order.status}</Badge>
+                        </SelectValue>
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="Processing">Processing</SelectItem>
+                        <SelectItem value="Delivered">Delivered</SelectItem>
+                        <SelectItem value="Cancelled">Cancelled</SelectItem>
+                      </SelectContent>
+                    </Select>
                   </TableCell>
                   <TableCell className="text-right">
                     ₹{order.total.toFixed(2)}

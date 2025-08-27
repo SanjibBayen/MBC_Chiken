@@ -1,5 +1,6 @@
+
 import { db } from '@/lib/firebase';
-import { collection, getDocs, doc, getDoc, query, where, addDoc, serverTimestamp, orderBy } from 'firebase/firestore';
+import { collection, getDocs, doc, getDoc, query, where, addDoc, serverTimestamp, orderBy, updateDoc } from 'firebase/firestore';
 import type { Order } from '@/lib/types';
 
 export class OrderService {
@@ -34,5 +35,10 @@ export class OrderService {
         date: new Date().toISOString(),
     });
     return docRef.id;
+  }
+
+  static async updateOrderStatus(orderId: string, status: Order['status']): Promise<void> {
+    const orderRef = doc(db, 'orders', orderId);
+    await updateDoc(orderRef, { status });
   }
 }

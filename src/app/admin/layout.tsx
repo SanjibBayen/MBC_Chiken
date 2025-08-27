@@ -34,6 +34,7 @@ const adminNavLinks = [
   { href: '/admin', label: 'Dashboard', icon: Home },
   { href: '/admin/orders', label: 'Orders', icon: ShoppingCart },
   { href: '/admin/products', label: 'Products', icon: Package },
+  { href: '/admin/customers', label: 'Customers', icon: Users },
 ];
 
 export default function AdminLayout({
@@ -42,6 +43,12 @@ export default function AdminLayout({
   children: React.ReactNode;
 }) {
   const pathname = usePathname();
+  
+  const getPageTitle = () => {
+    if (pathname.startsWith('/admin/products/')) return 'Manage Product';
+    return adminNavLinks.find(l => pathname.startsWith(l.href))?.label || 'Admin';
+  }
+
   return (
     <SidebarProvider>
       <div className="flex min-h-screen">
@@ -57,7 +64,7 @@ export default function AdminLayout({
                     <TooltipTrigger asChild>
                       <Link href={link.href}>
                         <SidebarMenuButton
-                          isActive={pathname === link.href}
+                          isActive={pathname.startsWith(link.href)}
                           tooltip={{
                             children: link.label,
                           }}
@@ -80,7 +87,7 @@ export default function AdminLayout({
           <header className="sticky top-0 z-10 flex h-[57px] items-center gap-1 border-b bg-background px-4">
             <SidebarTrigger className="md:hidden" />
             <h1 className="text-xl font-semibold">
-              {adminNavLinks.find(l => l.href === pathname)?.label || 'Admin'}
+              {getPageTitle()}
             </h1>
           </header>
           <main className="flex-1 p-4 sm:px-6 sm:py-0 md:gap-8">

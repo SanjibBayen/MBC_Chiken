@@ -1,5 +1,6 @@
+
 import { db } from '@/lib/firebase';
-import { collection, getDocs, doc, getDoc, query, where } from 'firebase/firestore';
+import { collection, getDocs, doc, getDoc, query, where, addDoc, updateDoc, deleteDoc, setDoc } from 'firebase/firestore';
 import type { Product } from '@/lib/types';
 
 export class ProductService {
@@ -31,5 +32,20 @@ export class ProductService {
     }
     
     return null;
+  }
+
+  static async createProduct(productData: Omit<Product, 'id'>): Promise<string> {
+    const docRef = await addDoc(this.productsCollection, productData);
+    return docRef.id;
+  }
+
+  static async updateProduct(id: string, productData: Partial<Omit<Product, 'id'>>): Promise<void> {
+    const docRef = doc(db, 'products', id);
+    await updateDoc(docRef, productData);
+  }
+
+  static async deleteProduct(id: string): Promise<void> {
+    const docRef = doc(db, 'products', id);
+    await deleteDoc(docRef);
   }
 }
