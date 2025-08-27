@@ -18,6 +18,15 @@ import { CategoryMenu } from "./category-menu";
 
 function ClientOnlyCart() {
   const { cartCount, isCartOpen, setIsCartOpen } = useCart();
+  const [isMounted, setIsMounted] = useState(false);
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
+  if (!isMounted) {
+     return <Button variant="ghost" className="relative flex items-center gap-2 px-2 hover:bg-transparent" disabled><ShoppingCart className="h-6 w-6" /><span className="hidden md:block">Cart</span></Button>;
+  }
   
   return (
       <Sheet open={isCartOpen} onOpenChange={setIsCartOpen}>
@@ -47,12 +56,7 @@ function ClientOnlyCart() {
 
 
 export function Header() {
-  const [isMounted, setIsMounted] = useState(false);
   const pathname = usePathname();
-
-  useEffect(() => {
-    setIsMounted(true);
-  }, []);
 
   const navLinks = [
     { href: "/", label: "Home" },
@@ -138,7 +142,7 @@ export function Header() {
                 </Link>
             </Button>
           
-          {isMounted ? <ClientOnlyCart /> : <Button variant="ghost" className="relative flex items-center gap-2 px-2 hover:bg-transparent" disabled><ShoppingCart className="h-6 w-6" /><span className="hidden md:block">Cart</span></Button>}
+          <ClientOnlyCart />
         </div>
       </div>
        <div className="container pb-2 md:hidden">
