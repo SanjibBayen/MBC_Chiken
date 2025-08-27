@@ -7,7 +7,10 @@ export interface Product {
   variants: {
     name: string; // "500g", "1kg"
     price: number;
+    originalPrice?: number;
     stock: number;
+    pieces: string;
+    serves: number;
   }[];
   images: string[];
   reviews: Review[];
