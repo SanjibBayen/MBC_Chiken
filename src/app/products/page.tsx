@@ -1,7 +1,8 @@
 import { ProductCard } from "@/components/product-card";
-import { PRODUCTS } from "@/lib/products";
+import { ProductService } from "@/services/product-service";
 
-export default function ProductsPage() {
+export default async function ProductsPage() {
+  const products = await ProductService.getProducts();
   return (
     <div className="container mx-auto px-4 py-12">
       <div className="text-center mb-12">
@@ -10,7 +11,7 @@ export default function ProductsPage() {
       </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
-        {PRODUCTS.map((product) => (
+        {products.map((product) => (
           <ProductCard key={product.id} product={product} />
         ))}
       </div>

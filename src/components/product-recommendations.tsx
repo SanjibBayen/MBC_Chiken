@@ -4,17 +4,19 @@ import { useEffect, useState } from 'react';
 import { useCart } from '@/hooks/use-cart';
 import { getProductRecommendations } from '@/ai/flows/product-recommendations';
 import type { ProductRecommendationsOutput } from '@/ai/flows/product-recommendations';
-import { PRODUCTS } from '@/lib/products';
 import Image from 'next/image';
 import Link from 'next/link';
 import { Button } from './ui/button';
 import { Skeleton } from './ui/skeleton';
 import { Wand2 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { ProductService } from '@/services/product-service';
+import type { Product } from '@/lib/types';
 
 export function ProductRecommendations() {
   const { cartItems, addToCart, setIsCartOpen } = useCart();
   const [recommendations, setRecommendations] = useState<ProductRecommendationsOutput['recommendations']>([]);
+  const [recommendedProducts, setRecommendedProducts] = useState<Product[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
 
@@ -29,6 +31,11 @@ export function ProductRecommendations() {
           }));
           const result = await getProductRecommendations({ cartItems: cartData });
           setRecommendations(result.recommendations);
+
+          const productPromises = result.recommendations.map(rec => ProductService.getProductById(rec.productId));
+          const products = (await Promise.all(productPromises)).filter((p): p is Product => p !== null);
+          setRecommendedProducts(products);
+
         } catch (error) {
           console.error('Failed to get product recommendations:', error);
           toast({
@@ -43,6 +50,7 @@ export function ProductRecommendations() {
       fetchRecommendations();
     } else {
       setRecommendations([]);
+      setRecommendedProducts([]);
     }
   }, [cartItems, toast]);
 
@@ -50,12 +58,11 @@ export function ProductRecommendations() {
     return <RecommendationSkeleton />;
   }
 
-  if (recommendations.length === 0) {
+  if (recommendations.length === 0 || recommendedProducts.length === 0) {
     return null;
   }
   
-  const handleAddToCart = (productId: string) => {
-    const product = PRODUCTS.find(p => p.id === productId);
+  const handleAddToCart = (product: Product) => {
     if(product) {
         const defaultVariant = product.variants[0];
         addToCart({
@@ -64,6 +71,7 @@ export function ProductRecommendations() {
             variantName: defaultVariant.name,
             price: defaultVariant.price,
             image: product.images[0],
+            slug: product.slug,
         })
     }
   }
@@ -76,11 +84,12 @@ export function ProductRecommendations() {
         You Might Also Like
       </h4>
       <div className="space-y-4">
-        {recommendations.map(rec => {
-          const product = PRODUCTS.find(p => p.id === rec.productId);
-          if (!product) return null;
+        {recommendedProducts.map(product => {
+          const recommendation = recommendations.find(r => r.productId === product.id);
+          if (!recommendation) return null;
+
           return (
-            <div key={rec.productId} className="flex gap-4 items-start bg-secondary/50 p-3 rounded-lg">
+            <div key={product.id} className="flex gap-4 items-start bg-secondary/50 p-3 rounded-lg">
               <Image
                 src={product.images[0]}
                 alt={product.name}
@@ -93,10 +102,10 @@ export function ProductRecommendations() {
                 <Link href={`/products/${product.slug}`} onClick={() => setIsCartOpen(false)}>
                     <p className="font-semibold text-sm hover:text-primary">{product.name}</p>
                 </Link>
-                <p className="text-xs text-muted-foreground italic mt-1">&quot;{rec.reason}&quot;</p>
+                <p className="text-xs text-muted-foreground italic mt-1">&quot;{recommendation.reason}&quot;</p>
                 <div className="flex justify-between items-center mt-2">
                     <p className="text-sm font-bold text-primary">₹{product.variants[0].price}</p>
-                    <Button size="sm" variant="outline" onClick={() => handleAddToCart(product.id)}>
+                    <Button size="sm" variant="outline" onClick={() => handleAddToCart(product)}>
                         Add
                     </Button>
                 </div>

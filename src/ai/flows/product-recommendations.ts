@@ -10,6 +10,48 @@
 
 import {ai} from '@/ai/genkit';
 import {z} from 'genkit';
+import { ProductService } from '@/services/product-service';
+
+const ProductSchema = z.object({
+  id: z.string(),
+  name: z.string(),
+  slug: z.string(),
+  category: z.string(),
+  description: z.string(),
+  variants: z.array(z.object({
+    name: z.string(),
+    price: z.number(),
+    originalPrice: z.number().optional(),
+    stock: z.number(),
+    pieces: z.string(),
+    serves: z.number(),
+  })),
+  images: z.array(z.string()),
+  reviews: z.array(z.object({
+    id: z.string(),
+    author: z.string(),
+    rating: z.number(),
+    comment: z.string(),
+    date: z.string(),
+  })),
+});
+
+
+const getProduct = ai.defineTool(
+  {
+    name: 'getProduct',
+    description: 'Returns the full details of a product based on its ID.',
+    inputSchema: z.object({
+      productId: z.string().describe('The ID of the product to retrieve.'),
+    }),
+    outputSchema: ProductSchema.nullable(),
+  },
+  async (input) => {
+    console.log(`Getting product details for: ${input.productId}`);
+    return await ProductService.getProductById(input.productId);
+  }
+);
+
 
 const ProductRecommendationsInputSchema = z.object({
   cartItems: z.array(
@@ -46,9 +88,11 @@ const productRecommendationsPrompt = ai.definePrompt({
   name: 'productRecommendationsPrompt',
   input: {schema: ProductRecommendationsInputSchema},
   output: {schema: ProductRecommendationsOutputSchema},
+  tools: [getProduct],
   prompt: `You are a product recommendation expert for MBC Chicken Express.
 
   Based on the customer's current cart items and past order history, you will suggest related products that they might be interested in purchasing.
+  Use the getProduct tool to get full details for each product in the cart to understand what the user is buying.
   Explain the reason for each recommendation.
 
   Current Cart Items:

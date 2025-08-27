@@ -1,10 +1,10 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { PRODUCTS } from "@/lib/products";
 import { ChefHat, Feather, Heart, Star, Truck, ShieldCheck, Award } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { ProductCard } from "@/components/product-card";
+import { ProductService } from "@/services/product-service";
 
 const categories = [
   { name: 'Fresh Cuts', icon: Feather, description: 'Tender, juicy cuts, ready for your curry.' },
@@ -31,8 +31,8 @@ const testimonials = [
   },
 ];
 
-export default function Home() {
-  const featuredProducts = PRODUCTS.slice(0, 4);
+export default async function Home() {
+  const featuredProducts = await ProductService.getProducts();
 
   return (
     <div className="flex flex-col">
@@ -95,7 +95,7 @@ export default function Home() {
           <h2 className="text-3xl font-bold text-center mb-2">Top Picks for You</h2>
           <p className="text-muted-foreground text-center mb-12 max-w-xl mx-auto">Explore our best-selling products, loved by customers for their freshness and quality.</p>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-            {featuredProducts.map((product) => (
+            {featuredProducts.slice(0, 4).map((product) => (
               <ProductCard key={product.id} product={product} />
             ))}
           </div>

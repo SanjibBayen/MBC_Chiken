@@ -4,9 +4,6 @@
 import {
   Card,
   CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
 } from '@/components/ui/card';
 import {
   Table,
@@ -18,7 +15,6 @@ import {
 } from '@/components/ui/table';
 import { Button } from '@/components/ui/button';
 import Image from 'next/image';
-import { PRODUCTS } from '@/lib/products';
 import { Badge } from '@/components/ui/badge';
 import { MoreHorizontal } from 'lucide-react';
 import {
@@ -28,8 +24,22 @@ import {
   DropdownMenuLabel,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import { useEffect, useState } from 'react';
+import type { Product } from '@/lib/types';
+import { ProductService } from '@/services/product-service';
 
 export default function AdminProductsPage() {
+  const [products, setProducts] = useState<Product[]>([]);
+
+  useEffect(() => {
+    const fetchProducts = async () => {
+      const allProducts = await ProductService.getProducts();
+      setProducts(allProducts);
+    }
+    fetchProducts();
+  }, [])
+
+
   return (
     <div>
       <div className="flex items-center justify-between mb-6">
@@ -57,7 +67,7 @@ export default function AdminProductsPage() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {PRODUCTS.map(product => (
+              {products.map(product => (
                 <TableRow key={product.id}>
                   <TableCell className="hidden sm:table-cell">
                     <Image
