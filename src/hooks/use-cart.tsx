@@ -7,7 +7,7 @@ import { PRODUCTS } from '@/lib/products';
 
 interface CartContextType {
   cartItems: CartItem[];
-  addToCart: (item: Omit<CartItem, 'quantity' | 'slug'>) => void;
+  addToCart: (item: Omit<CartItem, 'quantity'>) => void;
   removeFromCart: (productId: string, variantName: string) => void;
   updateQuantity: (productId: string, variantName: string, quantity: number) => void;
   clearCart: () => void;
@@ -31,7 +31,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
         setCartItems(JSON.parse(storedCart));
       } catch (e) {
         console.error("Failed to parse cart from localStorage", e);
-        // localStorage.removeItem('mbc-cart'); // Optional: clear corrupted cart data
+        localStorage.removeItem('mbc-cart');
       }
     }
   }, []);
@@ -40,17 +40,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
     localStorage.setItem('mbc-cart', JSON.stringify(cartItems));
   }, [cartItems]);
 
-  const addToCart = (itemToAdd: Omit<CartItem, 'quantity' | 'slug'>) => {
-    const product = PRODUCTS.find((p) => p.id === itemToAdd.productId);
-    if (!product) {
-      toast({
-        variant: 'destructive',
-        title: "Error",
-        description: "Could not find product to add to cart.",
-      });
-      return;
-    }
-
+  const addToCart = (itemToAdd: Omit<CartItem, 'quantity'>) => {
     setCartItems(prevItems => {
       const existingItem = prevItems.find(
         item => item.productId === itemToAdd.productId && item.variantName === itemToAdd.variantName
@@ -64,7 +54,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
         );
       }
       
-      return [...prevItems, { ...itemToAdd, quantity: 1, slug: product.slug }];
+      return [...prevItems, { ...itemToAdd, quantity: 1 }];
     });
     toast({
         title: "Added to cart!",

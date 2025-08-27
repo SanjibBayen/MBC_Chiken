@@ -14,13 +14,13 @@ export function Footer() {
               Fresh chicken delivered to your door. Fast, Fresh, Instant.
             </p>
             <div className="mt-4 flex space-x-4">
-              <Link href="#" className="hover:text-primary-foreground">
+              <Link href="#" className="text-accent-foreground/80 hover:text-primary-foreground">
                 <Facebook className="h-6 w-6" />
               </Link>
-              <Link href="#" className="hover:text-primary-foreground">
+              <Link href="#" className="text-accent-foreground/80 hover:text-primary-foreground">
                 <Instagram className="h-6 w-6" />
               </Link>
-              <Link href="#" className="hover:text-primary-foreground">
+              <Link href="#" className="text-accent-foreground/80 hover:text-primary-foreground">
                 <Twitter className="h-6 w-6" />
               </Link>
             </div>

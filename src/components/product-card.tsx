@@ -23,11 +23,12 @@ export function ProductCard({ product }: ProductCardProps) {
       variantName: defaultVariant.name,
       price: defaultVariant.price,
       image: product.images[0],
+      slug: product.slug,
     });
   };
 
   return (
-    <Card className="flex flex-col overflow-hidden transition-all duration-300 hover:shadow-lg">
+    <Card className="group flex flex-col overflow-hidden transition-all duration-300 hover:shadow-xl hover:-translate-y-1">
       <CardHeader className="p-0">
         <Link href={`/products/${product.slug}`} className="block overflow-hidden">
           <Image
@@ -42,11 +43,11 @@ export function ProductCard({ product }: ProductCardProps) {
       </CardHeader>
       <CardContent className="flex-1 p-4">
         <Link href={`/products/${product.slug}`}>
-          <CardTitle className="text-base font-bold leading-tight hover:text-primary">
+          <CardTitle className="text-base font-bold leading-tight group-hover:text-primary">
             {product.name}
           </CardTitle>
         </Link>
-        <p className="mt-2 text-sm text-muted-foreground">{product.category}</p>
+        <p className="mt-1 text-sm text-muted-foreground">{product.category}</p>
       </CardContent>
       <CardFooter className="p-4 pt-0 flex justify-between items-center">
         <p className="text-lg font-semibold text-primary">₹{defaultVariant.price}</p>
