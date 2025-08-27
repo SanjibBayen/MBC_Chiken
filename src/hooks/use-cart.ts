@@ -3,6 +3,7 @@
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import type { CartItem } from '@/lib/types';
 import { useToast } from '@/hooks/use-toast';
+import { PRODUCTS } from '@/lib/products';
 
 interface CartContextType {
   cartItems: CartItem[];
@@ -40,6 +41,16 @@ export function CartProvider({ children }: { children: ReactNode }) {
   }, [cartItems]);
 
   const addToCart = (itemToAdd: Omit<CartItem, 'quantity' | 'slug'>) => {
+    const product = PRODUCTS.find((p) => p.id === itemToAdd.productId);
+    if (!product) {
+      toast({
+        variant: 'destructive',
+        title: "Error",
+        description: "Could not find product to add to cart.",
+      });
+      return;
+    }
+
     setCartItems(prevItems => {
       const existingItem = prevItems.find(
         item => item.productId === itemToAdd.productId && item.variantName === itemToAdd.variantName
@@ -52,8 +63,8 @@ export function CartProvider({ children }: { children: ReactNode }) {
             : item
         );
       }
-      const product = require('@/lib/products').PRODUCTS.find((p: any) => p.id === itemToAdd.productId);
-      return [...prevItems, { ...itemToAdd, quantity: 1, slug: product?.slug || '' }];
+      
+      return [...prevItems, { ...itemToAdd, quantity: 1, slug: product.slug }];
     });
     toast({
         title: "Added to cart!",
