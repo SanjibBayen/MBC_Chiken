@@ -10,7 +10,7 @@ import Link from 'next/link';
 import { Button } from './ui/button';
 import { Skeleton } from './ui/skeleton';
 import { Wand2 } from 'lucide-react';
-import { useToast } from './ui/use-toast';
+import { useToast } from '@/hooks/use-toast';
 
 export function ProductRecommendations() {
   const { cartItems, addToCart, setIsCartOpen } = useCart();
