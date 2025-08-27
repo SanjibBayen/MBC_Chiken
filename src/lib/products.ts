@@ -1,23 +1,24 @@
 import type { Product } from './types';
 
-// This file is now for seeding the database and for local development.
-// The data is now fetched from Firebase in production.
+// This file is now only for seeding the database and for local development.
+// The data is fetched from Firebase in the running application via ProductService.
+// To seed your Firestore database run `npm run seed:db`
 
-export const PRODUCTS: Product[] = [
+export const PRODUCTS_TO_SEED: Product[] = [
   {
     id: '1',
     name: 'Chicken Curry Cut - Small Pieces',
     slug: 'chicken-curry-cut-small',
     category: 'Fresh Cuts',
     description:
-      'Tender, juicy, and flavorful chicken pieces perfect for making delicious and aromatic chicken curries. These small cuts ensure quick and even cooking.',
+      'Tender, juicy, and flavorful chicken pieces (approx. 50g each) perfect for making delicious and aromatic chicken curries. These small cuts ensure quick and even cooking. Freshly cut and hygienically packed.',
     variants: [
       {
         name: '500g',
         price: 160,
         originalPrice: 193,
         stock: 50,
-        pieces: '12-18',
+        pieces: '10-12',
         serves: 4,
       },
       {
@@ -25,7 +26,7 @@ export const PRODUCTS: Product[] = [
         price: 304,
         originalPrice: 365,
         stock: 30,
-        pieces: '24-36',
+        pieces: '20-24',
         serves: 6,
       },
       {
@@ -33,7 +34,7 @@ export const PRODUCTS: Product[] = [
         price: 450,
         originalPrice: 540,
         stock: 20,
-        pieces: '36-54',
+        pieces: '30-36',
         serves: 8,
       },
     ],
@@ -54,7 +55,7 @@ export const PRODUCTS: Product[] = [
     slug: 'chicken-curry-cut-large',
     category: 'Fresh Cuts',
     description:
-      'Hearty, large chunks of bone-in chicken, ideal for rich and robust curries or biryanis. The bone adds extra flavor to your dishes.',
+      'Hearty, large chunks of bone-in chicken (approx. 100g each), ideal for rich and robust curries or biryanis. The bone adds extra flavor to your dishes. Store in the refrigerator for best results.',
     variants: [
       {
         name: '500g',
@@ -90,7 +91,7 @@ export const PRODUCTS: Product[] = [
     slug: 'chicken-keema',
     category: 'Fresh Cuts',
     description:
-      'Finely minced chicken, perfect for a variety of dishes like keema curry, patties, or stuffing. It cooks quickly and absorbs flavors beautifully.',
+      'Finely minced chicken, perfect for a variety of dishes like keema curry, patties, or stuffing. It cooks quickly and absorbs flavors beautifully. Best used fresh for optimal taste.',
     variants: [
       {
         name: '500g',
@@ -134,7 +135,7 @@ export const PRODUCTS: Product[] = [
     slug: 'chicken-drumsticks',
     category: 'Fresh Cuts',
     description:
-      'Juicy and meaty chicken drumsticks, a favorite for all ages. Perfect for frying, grilling, or making a flavorful drumstick curry.',
+      'Juicy and meaty chicken drumsticks, a favorite for all ages. Perfect for frying, grilling, or making a flavorful drumstick curry. A guaranteed hit at any dinner table.',
     variants: [
       {
         name: '500g',
@@ -170,10 +171,10 @@ export const PRODUCTS: Product[] = [
     slug: 'chicken-breast-boneless',
     category: 'Boneless',
     description:
-      'Lean, tender, and versatile boneless chicken breast. Ideal for grilling, baking, stir-frying, or shredding for sandwiches and salads.',
+      'Lean, tender, and versatile boneless chicken breast. Ideal for grilling, baking, stir-frying, or shredding for sandwiches and salads. A healthy and delicious option.',
     variants: [
       {
-        name: '450g',
+        name: '500g',
         price: 252,
         originalPrice: 311,
         stock: 55,
@@ -181,7 +182,7 @@ export const PRODUCTS: Product[] = [
         serves: 4,
       },
       {
-        name: '900g',
+        name: '1kg',
         price: 480,
         originalPrice: 590,
         stock: 30,
@@ -189,7 +190,7 @@ export const PRODUCTS: Product[] = [
         serves: 8,
       },
        {
-        name: '1.35kg',
+        name: '1.5kg',
         price: 700,
         originalPrice: 850,
         stock: 20,
@@ -210,11 +211,11 @@ export const PRODUCTS: Product[] = [
   },
   {
     id: '6',
-    name: 'Chicken Giblets',
+    name: 'Chicken Giblets (Liver, Stomach, Neck)',
     slug: 'chicken-giblets',
     category: 'Organ Meats',
     description:
-      'A mix of chicken liver, stomach (gizzard), and neck. A delicacy in many cuisines, perfect for flavorful and nutritious traditional dishes.',
+      'A mix of chicken liver, stomach (gizzard), and neck. A delicacy in many cuisines, perfect for flavorful and nutritious traditional dishes. Must be cooked thoroughly.',
     variants: [
       {
         name: '500g',
@@ -224,17 +225,25 @@ export const PRODUCTS: Product[] = [
         pieces: 'N/A',
         serves: 4,
       },
+       {
+        name: '1kg',
+        price: 230,
+        originalPrice: 270,
+        stock: 20,
+        pieces: 'N/A',
+        serves: 8,
+      },
     ],
     images: ['https://picsum.photos/600/400?random=6'],
     reviews: [],
   },
   {
     id: '7',
-    name: 'Whole Chicken',
+    name: 'Whole Chicken (without skin)',
     slug: 'whole-chicken',
     category: 'Specialty',
     description:
-      'A whole chicken without skin, perfect for a family roast, grilling, or cutting into pieces as per your requirement. Tender and juicy all the way through.',
+      'A whole chicken without skin (700-900g), perfect for a family roast, grilling, or cutting into pieces as per your requirement. Tender and juicy all the way through.',
     variants: [
       {
         name: '1 pc (700-900g)',
@@ -254,7 +263,7 @@ export const PRODUCTS: Product[] = [
     slug: 'chicken-leg-boneless',
     category: 'Boneless',
     description:
-      'Juicy, tender, and flavor-packed boneless chicken leg meat. It is more flavorful than chicken breast and is great for curries, kebabs, and stir-fries.',
+      'Juicy, tender, and flavor-packed boneless chicken leg meat. It is more flavorful than chicken breast and is great for curries, kebabs, and stir-fries. A versatile cut for many recipes.',
     variants: [
       {
         name: '500g',
@@ -286,12 +295,20 @@ export const PRODUCTS: Product[] = [
   },
   {
     id: '9',
-    name: 'Country Chicken',
+    name: 'Country Chicken (Desi)',
     slug: 'country-chicken',
     category: 'Specialty',
     description:
-      'Also known as Desi Murg, this free-range country chicken has a richer, more intense flavor and a firmer texture compared to broiler chicken.',
+      'Also known as Desi Murg, this free-range country chicken has a richer, more intense flavor and a firmer texture compared to broiler chicken. Perfect for slow-cooked traditional recipes.',
     variants: [
+       {
+        name: '500g',
+        price: 280,
+        originalPrice: 320,
+        stock: 10,
+        pieces: '4-6',
+        serves: 3,
+      },
       {
         name: '1kg',
         price: 550,
@@ -306,12 +323,20 @@ export const PRODUCTS: Product[] = [
   },
   {
     id: '10',
-    name: 'Chicken for Pets',
+    name: 'Chicken for Pets (Dog Food)',
     slug: 'dog-food-chicken',
     category: 'More',
     description:
-      'A healthy and natural source of protein for your furry friend. Cooked and unseasoned chicken pieces suitable for dogs and cats.',
+      'A healthy and natural source of protein for your furry friend. Cooked and unseasoned chicken pieces suitable for dogs and cats. Not for human consumption.',
     variants: [
+       {
+        name: '500g',
+        price: 80,
+        originalPrice: 90,
+        stock: 50,
+        pieces: 'N/A',
+        serves: 0,
+      },
       {
         name: '1kg',
         price: 150,
@@ -330,7 +355,7 @@ export const PRODUCTS: Product[] = [
     slug: 'chicken-wings',
     category: 'Fresh Cuts',
     description:
-      'The perfect party snack or appetizer. These chicken wings can be fried, baked, or grilled to perfection. Get them with or without skin.',
+      'The perfect party snack or appetizer. These chicken wings can be fried, baked, or grilled to perfection. A crowd-pleasing favorite.',
     variants: [
       {
         name: '500g (With Skin)',
