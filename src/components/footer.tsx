@@ -3,6 +3,7 @@ import { CONTACT_EMAIL, CONTACT_PHONE, SHOP_ADDRESS, SHOP_NAME } from "@/lib/con
 import { Facebook, Instagram, Twitter } from "lucide-react";
 import Link from "next/link";
 import { Logo } from "./logo";
+import { Button } from "./ui/button";
 
 export function Footer() {
   return (
@@ -54,6 +55,11 @@ export function Footer() {
           </div>
         </div>
         <div className="mt-8 border-t border-border/20 pt-8 text-center text-sm text-muted-foreground/60">
+          <p className="mb-4">
+            <Button asChild variant="secondary">
+                <Link href="/admin">Switch to Admin View (Dev)</Link>
+            </Button>
+          </p>
           <p>&copy; {new Date().getFullYear()} {SHOP_NAME}. All rights reserved.</p>
         </div>
       </div>

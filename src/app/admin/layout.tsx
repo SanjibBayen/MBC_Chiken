@@ -9,9 +9,10 @@ import {
   Package,
   Users,
   PanelLeft,
-  Bell,
   User,
   LogOut,
+  Menu,
+  Store,
 } from 'lucide-react';
 import {
   DropdownMenu,
@@ -22,7 +23,6 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { Logo } from '@/components/logo';
 
@@ -130,9 +130,18 @@ export default function AdminLayout({
             <DropdownMenuContent align="end">
               <DropdownMenuLabel>Admin Account</DropdownMenuLabel>
               <DropdownMenuSeparator />
+               <DropdownMenuItem asChild>
+                  <Link href="/">
+                    <Store className="mr-2 h-4 w-4" />
+                    View Store
+                  </Link>
+               </DropdownMenuItem>
               <DropdownMenuItem>Settings</DropdownMenuItem>
               <DropdownMenuSeparator />
-              <DropdownMenuItem>Logout</DropdownMenuItem>
+              <DropdownMenuItem>
+                <LogOut className="mr-2 h-4 w-4" />
+                Logout
+              </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
         </header>
