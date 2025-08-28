@@ -13,8 +13,8 @@ const firebaseConfig = {
 };
 
 // Check if all required environment variables are set
-if (!firebaseConfig.apiKey) {
-    console.error("Firebase API key is not set. Please check your .env.local file.");
+if (!firebaseConfig.apiKey || !firebaseConfig.projectId) {
+    console.error("Firebase Project ID or API key is not set. Please check your .env.local file.");
     process.exit(1);
 }
 
@@ -27,9 +27,10 @@ async function seedDatabase() {
   const batch = writeBatch(db);
 
   PRODUCTS_TO_SEED.forEach(product => {
-    const { id, ...productData } = product;
-    // Ensure the document ID is the one from the product object
-    const docRef = doc(productsCollection, id);
+    // Use the product's 'id' field as the document ID in Firestore
+    const docRef = doc(productsCollection, product.id);
+    // The product data should not include the 'id' field itself
+    const { id, ...productData } = product; 
     batch.set(docRef, productData);
   });
 
@@ -38,6 +39,8 @@ async function seedDatabase() {
     console.log('Database seeded successfully with ' + PRODUCTS_TO_SEED.length + ' products!');
   } catch (error) {
     console.error('Error seeding database:', error);
+    console.error("\nPLEASE CHECK: Have you created a Firestore database in your Firebase project and set the security rules to allow writes?");
+    console.error("You can do this by visiting the Firebase Console for your project, going to Firestore Database, and creating a database. For development, you can start with open rules and secure them later.");
   }
 }
 
