@@ -4,13 +4,15 @@
 import { ReactNode, useEffect } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { User, ShoppingBag, LogOut } from 'lucide-react';
+import { User, ShoppingBag, LogOut, PanelLeft } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useAuth } from '@/hooks/use-auth';
 import { Skeleton } from '@/components/ui/skeleton';
 import { signOut } from 'firebase/auth';
 import { auth } from '@/lib/firebase';
 import { useToast } from '@/hooks/use-toast';
+import { Button } from '@/components/ui/button';
+import { Logo } from '@/components/logo';
 
 const accountNavLinks = [
   { href: '/account', label: 'My Profile', icon: User },
@@ -59,40 +61,53 @@ export default function AccountLayout({ children }: { children: ReactNode }) {
   }
 
   return (
-    <div className="container mx-auto px-4 py-12">
-      <div className="grid md:grid-cols-4 gap-8">
-        <nav className="md:col-span-1">
-           <h1 className="text-2xl font-bold font-headline text-primary mb-6">My Account</h1>
-          <ul className="space-y-2">
-            {accountNavLinks.map(link => (
-              <li key={link.href}>
-                <Link
-                  href={link.href}
-                  className={cn(
-                    'flex items-center gap-3 p-3 rounded-md transition-colors',
-                    pathname === link.href
-                      ? 'bg-primary text-primary-foreground'
-                      : 'hover:bg-muted'
-                  )}
-                >
-                  <link.icon className="h-5 w-5" />
-                  <span className="font-medium">{link.label}</span>
-                </Link>
-              </li>
-            ))}
-             <li>
-                <button
-                  onClick={handleLogout}
-                  className={'flex items-center gap-3 p-3 rounded-md transition-colors w-full hover:bg-muted'}
-                >
-                  <LogOut className="h-5 w-5" />
-                  <span className="font-medium">Logout</span>
-                </button>
-              </li>
-          </ul>
-        </nav>
-        <main className="md:col-span-3">{children}</main>
+    <>
+      <header className="sticky top-0 z-10 flex h-[57px] items-center gap-1 border-b bg-background px-4">
+          <Link href="/" className="md:hidden">
+            <Button variant="outline" size="icon" className="h-8 w-8">
+                <PanelLeft className="h-4 w-4" />
+            </Button>
+          </Link>
+          <div className="flex-1">
+             <h1 className="text-xl font-semibold">
+               My Account
+             </h1>
+          </div>
+      </header>
+      <div className="container mx-auto px-4 py-12 flex-1">
+        <div className="grid md:grid-cols-4 gap-8">
+          <nav className="md:col-span-1">
+            <ul className="space-y-2">
+              {accountNavLinks.map(link => (
+                <li key={link.href}>
+                  <Link
+                    href={link.href}
+                    className={cn(
+                      'flex items-center gap-3 p-3 rounded-md transition-colors text-sm font-medium',
+                      pathname === link.href
+                        ? 'bg-primary text-primary-foreground'
+                        : 'text-muted-foreground hover:bg-muted hover:text-foreground'
+                    )}
+                  >
+                    <link.icon className="h-5 w-5" />
+                    <span>{link.label}</span>
+                  </Link>
+                </li>
+              ))}
+              <li>
+                  <button
+                    onClick={handleLogout}
+                    className={'w-full flex items-center gap-3 p-3 rounded-md transition-colors text-sm font-medium text-muted-foreground hover:bg-muted hover:text-foreground'}
+                  >
+                    <LogOut className="h-5 w-5" />
+                    <span>Logout</span>
+                  </button>
+                </li>
+            </ul>
+          </nav>
+          <main className="md:col-span-3">{children}</main>
+        </div>
       </div>
-    </div>
+    </>
   );
 }

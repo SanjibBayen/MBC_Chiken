@@ -1,4 +1,4 @@
-export const SHOP_NAME = 'MBC Chicken Express';
+export const SHOP_NAME = 'MBC Chicken';
 export const SHOP_SLOGAN = 'Fast - Fresh - Instant';
 export const CONTACT_PERSON = 'Biswajit Halder';
 export const CONTACT_PHONE = '9007920161';

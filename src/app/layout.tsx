@@ -6,9 +6,10 @@ import { Header } from '@/components/header';
 import { Footer } from '@/components/footer';
 import { CartProvider } from '@/hooks/use-cart';
 import { AuthProvider } from '@/hooks/use-auth';
+import { Analytics } from "@vercel/analytics/react"
 
 export const metadata: Metadata = {
-  title: 'MBC Chicken Express',
+  title: 'MBC Chicken',
   description: 'Fast - Fresh - Instant',
 };
 
@@ -31,15 +32,15 @@ export default function RootLayout({
       >
         <AuthProvider>
           <CartProvider>
-            <div className="relative flex min-h-screen flex-col">
+            <div className="relative flex min-h-dvh flex-col">
               <Header />
-              <main className="flex-1">{children}</main>
+              <div className="flex-1">{children}</div>
               <Footer />
             </div>
             <Toaster />
           </CartProvider>
         </AuthProvider>
+        <Analytics />
       </body>
     </html>
   );
-}

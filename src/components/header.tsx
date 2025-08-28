@@ -6,13 +6,13 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-import { Menu, Search, ShoppingCart, User, MapPin, ChevronDown, Layers, Phone, Bell, LogOut } from "lucide-react";
+import { Menu, Search, ShoppingCart, User, MapPin, ChevronDown, Bell, LogOut } from "lucide-react";
 import { Logo } from "./logo";
 import { useCart } from "@/hooks/use-cart";
 import { useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
 import { usePathname } from "next/navigation";
-import { SHOP_ADDRESS, CONTACT_PHONE, SHOP_SLOGAN } from "@/lib/constants";
+import { CONTACT_PHONE, SHOP_SLOGAN } from "@/lib/constants";
 import { CartSheet } from "@/components/cart-sheet";
 import { CategoryMenu } from "./category-menu";
 import { useAuth } from "@/hooks/use-auth";
@@ -38,13 +38,13 @@ function ClientOnlyCart() {
   }, []);
 
   if (!isMounted) {
-     return <Button variant="ghost" className="relative flex items-center gap-2 px-2 hover:bg-transparent" disabled><ShoppingCart className="h-6 w-6" /><span className="hidden md:block">Cart</span></Button>;
+     return <Button variant="ghost" className="relative flex items-center gap-2 px-2" disabled><ShoppingCart className="h-6 w-6" /><span className="hidden md:block">Cart</span></Button>;
   }
   
   return (
       <Sheet open={isCartOpen} onOpenChange={setIsCartOpen}>
         <SheetTrigger asChild>
-          <Button variant="ghost" className="relative flex items-center gap-2 px-2 hover:bg-transparent">
+          <Button variant="ghost" className="relative flex items-center gap-2 px-2">
              <div className="relative">
                 <ShoppingCart className="h-6 w-6" />
                 {cartCount > 0 && (
@@ -90,6 +90,11 @@ export function Header() {
     router.push('/');
   }
 
+  // Hide header on admin and account pages for a focused experience
+  if (pathname.startsWith('/admin') || pathname.startsWith('/account')) {
+    return null;
+  }
+
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
         {/* Top bar */}
@@ -99,16 +104,16 @@ export function Header() {
                 <Phone className="h-3 w-3" />
                 <span>{CONTACT_PHONE}</span>
             </div>
-            <span className="font-medium tracking-wide">{SHOP_SLOGAN}</span>
+            <span className="font-medium tracking-wide hidden sm:block">{SHOP_SLOGAN}</span>
          </div>
        </div>
 
-      <div className="container flex h-20 items-center justify-between gap-6">
+      <div className="container flex h-20 items-center justify-between gap-4">
         {/* Mobile Menu & Logo */}
-        <div className="flex items-center md:hidden">
+        <div className="flex items-center">
           <Sheet>
             <SheetTrigger asChild>
-              <Button variant="ghost" size="icon">
+              <Button variant="ghost" size="icon" className="md:hidden">
                 <Menu className="h-6 w-6" />
                 <span className="sr-only">Toggle Menu</span>
               </Button>
@@ -133,45 +138,45 @@ export function Header() {
               </nav>
             </SheetContent>
           </Sheet>
+           <Logo />
         </div>
 
-        {/* Desktop Logo & Location */}
-        <div className="hidden md:flex items-center gap-4">
-          <Logo />
-           <div className="border-l pl-4">
-             <div className="flex items-center gap-1 font-bold text-sm cursor-pointer hover:text-primary">
-                <MapPin className="h-4 w-4 text-primary"/>
-                <span>Kolkata</span>
-                <ChevronDown className="h-4 w-4" />
-             </div>
-           </div>
-        </div>
+        {/* Desktop Nav */}
+        <nav className="items-center gap-6 hidden md:flex">
+            {navLinks.map((link) => (
+            <Link
+                key={link.href}
+                href={link.href}
+                className={cn(
+                    "text-sm font-medium transition-colors",
+                    pathname === link.href ? "text-primary font-bold" : "text-muted-foreground hover:text-primary"
+                )}
+            >
+                {link.label}
+            </Link>
+            ))}
+        </nav>
 
-        {/* Search Bar (Centered) */}
-        <div className="flex-1 w-full max-w-2xl hidden md:block">
-            <div className="relative">
-                <Input placeholder="Search for any delicious product..." className="pl-4 pr-10 h-11" />
-                <Button variant="ghost" size="icon" className="absolute right-1 top-1/2 -translate-y-1/2 h-8 w-8">
-                     <Search className="h-5 w-5 text-muted-foreground" />
-                </Button>
+
+        <div className="flex flex-1 items-center justify-end gap-2">
+             <div className="w-full max-w-sm hidden md:block">
+                <div className="relative">
+                    <Input placeholder="Search for any delicious product..." className="pl-4 pr-10 h-10" />
+                    <Button variant="ghost" size="icon" className="absolute right-1 top-1/2 -translate-y-1/2 h-8 w-8">
+                        <Search className="h-5 w-5 text-muted-foreground" />
+                    </Button>
+                </div>
             </div>
-        </div>
 
-        <div className="flex items-center gap-1">
-            <CategoryMenu />
-             <Button variant="ghost" className="flex items-center gap-2 px-2 hover:bg-transparent">
-                <Bell className="h-6 w-6" />
-                <span className="sr-only">Notifications</span>
-            </Button>
             {loading ? (
-              <Button variant="ghost" className="flex items-center gap-2 px-2 hover:bg-transparent" disabled>
+              <Button variant="ghost" className="flex items-center gap-2 px-2" disabled>
                 <User className="h-6 w-6" />
                 <span className="hidden md:block">...</span>
               </Button>
             ) : user ? (
                  <DropdownMenu>
                     <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" className="flex items-center gap-2 px-2 hover:bg-transparent">
+                        <Button variant="ghost" className="flex items-center gap-2 px-2">
                             <User className="h-6 w-6" />
                             <span className="hidden md:block">Account</span>
                         </Button>
@@ -193,7 +198,7 @@ export function Header() {
                     </DropdownMenuContent>
                 </DropdownMenu>
             ) : (
-                <Button asChild variant="ghost" className="flex items-center gap-2 px-2 hover:bg-transparent">
+                <Button asChild variant="ghost" className="flex items-center gap-2 px-2">
                     <Link href="/login">
                     <User className="h-6 w-6" />
                     <span className="hidden md:block">Login</span>
@@ -204,9 +209,9 @@ export function Header() {
           <ClientOnlyCart />
         </div>
       </div>
-       <div className="container pb-2 md:hidden">
+       <div className="container pb-4 md:hidden">
          <div className="relative">
-            <Input placeholder="Search for any delicious product..." className="pl-4 pr-10 h-11" />
+            <Input placeholder="Search..." className="pl-4 pr-10 h-10" />
             <Button variant="ghost" size="icon" className="absolute right-1 top-1/2 -translate-y-1/2 h-8 w-8">
                     <Search className="h-5 w-5 text-muted-foreground" />
             </Button>
