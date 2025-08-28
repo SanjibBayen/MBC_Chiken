@@ -6,15 +6,14 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-import { Menu, Search, ShoppingCart, User, MapPin, ChevronDown, Bell, LogOut, Phone } from "lucide-react";
+import { Menu, Search, ShoppingCart, User, LogOut, Phone } from "lucide-react";
 import { Logo } from "./logo";
 import { useCart } from "@/hooks/use-cart";
 import { useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { CONTACT_PHONE, SHOP_SLOGAN } from "@/lib/constants";
 import { CartSheet } from "@/components/cart-sheet";
-import { CategoryMenu } from "./category-menu";
 import { useAuth } from "@/hooks/use-auth";
 import {
   DropdownMenu,
@@ -27,7 +26,6 @@ import {
 import { signOut } from "firebase/auth";
 import { auth } from "@/lib/firebase";
 import { useToast } from "@/hooks/use-toast";
-import { useRouter } from "next/navigation";
 
 function ClientOnlyCart() {
   const { cartCount, isCartOpen, setIsCartOpen } = useCart();
