@@ -36,7 +36,7 @@ function ClientOnlyCart() {
   }, []);
 
   if (!isMounted) {
-     return <Button variant="ghost" className="relative flex items-center gap-2 px-2" disabled><ShoppingCart className="h-6 w-6" /><span className="hidden md:block">Cart</span></Button>;
+     return <Button variant="ghost" className="relative flex items-center gap-2 px-2" disabled><ShoppingCart className="h-6 w-6" /><span className="hidden lg:block">Cart</span></Button>;
   }
   
   return (
@@ -54,7 +54,7 @@ function ClientOnlyCart() {
                 </Badge>
                 )}
              </div>
-             <span className="hidden md:block">Cart</span>
+             <span className="hidden lg:block">Cart</span>
             <span className="sr-only">Open Cart</span>
           </Button>
         </SheetTrigger>
@@ -108,7 +108,7 @@ export function Header() {
         <div className="flex items-center gap-4">
           <Sheet>
             <SheetTrigger asChild>
-              <Button variant="ghost" size="icon" className="md:hidden">
+              <Button variant="ghost" size="icon" className="lg:hidden">
                 <Menu className="h-6 w-6" />
                 <span className="sr-only">Toggle Menu</span>
               </Button>
@@ -134,13 +134,13 @@ export function Header() {
             </SheetContent>
           </Sheet>
            <Logo />
-           <div className="items-center gap-2 text-sm hidden md:flex">
+           <div className="items-center gap-2 text-sm hidden lg:flex">
              <MapPin className="w-4 h-4 text-muted-foreground" />
              <span className="text-muted-foreground">Kolkata</span>
            </div>
         </div>
 
-        <nav className="items-center gap-6 hidden md:flex">
+        <nav className="items-center gap-6 hidden lg:flex">
             {navLinks.map((link) => (
             <Link
                 key={link.href}
@@ -157,7 +157,7 @@ export function Header() {
 
 
         <div className="flex flex-1 items-center justify-end gap-2">
-             <div className="w-full max-w-xs hidden md:block">
+             <div className="w-full max-w-xs hidden lg:block">
                 <div className="relative">
                     <Input placeholder="Search for any delicious product..." className="pl-4 pr-10 h-10" />
                     <Button variant="ghost" size="icon" className="absolute right-1 top-1/2 -translate-y-1/2 h-8 w-8">
@@ -169,14 +169,14 @@ export function Header() {
             {loading ? (
               <Button variant="ghost" className="flex items-center gap-2 px-2" disabled>
                 <User className="h-6 w-6" />
-                <span className="hidden md:block">...</span>
+                <span className="hidden lg:block">...</span>
               </Button>
             ) : user ? (
                  <DropdownMenu>
                     <DropdownMenuTrigger asChild>
                         <Button variant="ghost" className="flex items-center gap-2 px-2">
                             <User className="h-6 w-6" />
-                            <span className="hidden md:block">Account</span>
+                            <span className="hidden lg:block">Account</span>
                         </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end">
@@ -199,7 +199,7 @@ export function Header() {
                 <Button asChild variant="ghost" className="flex items-center gap-2 px-2">
                     <Link href="/login">
                     <User className="h-6 w-6" />
-                    <span className="hidden md:block">Login</span>
+                    <span className="hidden lg:block">Login</span>
                     </Link>
                 </Button>
             )}
@@ -207,7 +207,7 @@ export function Header() {
           <ClientOnlyCart />
         </div>
       </div>
-       <div className="container pb-4 md:hidden">
+       <div className="container pb-4 lg:hidden">
          <div className="relative">
             <Input placeholder="Search..." className="pl-4 pr-10 h-10" />
             <Button variant="ghost" size="icon" className="absolute right-1 top-1/2 -translate-y-1/2 h-8 w-8">
