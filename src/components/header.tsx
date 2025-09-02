@@ -6,7 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-import { Menu, Search, ShoppingCart, User, LogOut, Phone } from "lucide-react";
+import { Menu, Search, ShoppingCart, User, LogOut, Phone, MapPin } from "lucide-react";
 import { Logo } from "./logo";
 import { useCart } from "@/hooks/use-cart";
 import { useEffect, useState } from "react";
@@ -88,14 +88,12 @@ export function Header() {
     router.push('/');
   }
 
-  // Hide header on admin and account pages for a focused experience
   if (pathname.startsWith('/admin') || pathname.startsWith('/account')) {
     return null;
   }
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-        {/* Top bar */}
        <div className="bg-foreground text-background text-xs py-1.5">
          <div className="container flex justify-between items-center">
             <div className="flex items-center gap-2">
@@ -107,8 +105,7 @@ export function Header() {
        </div>
 
       <div className="container flex h-20 items-center justify-between gap-4">
-        {/* Mobile Menu & Logo */}
-        <div className="flex items-center">
+        <div className="flex items-center gap-4">
           <Sheet>
             <SheetTrigger asChild>
               <Button variant="ghost" size="icon" className="md:hidden">
@@ -137,9 +134,12 @@ export function Header() {
             </SheetContent>
           </Sheet>
            <Logo />
+           <div className="items-center gap-2 text-sm hidden md:flex">
+             <MapPin className="w-4 h-4 text-muted-foreground" />
+             <span className="text-muted-foreground">Kolkata</span>
+           </div>
         </div>
 
-        {/* Desktop Nav */}
         <nav className="items-center gap-6 hidden md:flex">
             {navLinks.map((link) => (
             <Link
@@ -157,7 +157,7 @@ export function Header() {
 
 
         <div className="flex flex-1 items-center justify-end gap-2">
-             <div className="w-full max-w-sm hidden md:block">
+             <div className="w-full max-w-xs hidden md:block">
                 <div className="relative">
                     <Input placeholder="Search for any delicious product..." className="pl-4 pr-10 h-10" />
                     <Button variant="ghost" size="icon" className="absolute right-1 top-1/2 -translate-y-1/2 h-8 w-8">
@@ -218,5 +218,3 @@ export function Header() {
     </header>
   );
 }
-
-    
