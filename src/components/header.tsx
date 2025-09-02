@@ -103,75 +103,45 @@ export function Header() {
          </div>
        </div>
 
-      <div className="container flex h-20 items-center">
-        <div className="lg:hidden mr-4">
-          <Sheet>
-            <SheetTrigger asChild>
-              <Button variant="ghost" size="icon">
-                <Menu className="h-6 w-6" />
-                <span className="sr-only">Toggle Menu</span>
-              </Button>
-            </SheetTrigger>
-            <SheetContent side="left" className="w-full max-w-xs">
-              <div className="p-4">
-                <Logo />
-              </div>
-              <nav className="mt-4 flex flex-col gap-4 px-4">
-                {navLinks.map((link) => (
-                  <Link
-                    key={link.href}
-                    href={link.href}
-                    className={cn(
-                        "text-lg font-medium hover:text-primary",
-                        pathname === link.href ? "text-primary" : "text-foreground/80"
-                    )}
-                  >
-                    {link.label}
-                  </Link>
-                ))}
-              </nav>
-            </SheetContent>
-          </Sheet>
-        </div>
-
-        <div className="flex items-center gap-4">
-           <Logo />
-           <div className="items-center gap-2 text-sm hidden md:flex">
+      <div className="container flex h-20 items-center justify-between">
+        {/* Left Side: Logo, Location, Nav */}
+        <div className="flex items-center gap-8">
+           <div className="flex items-center gap-4">
+              <Logo />
+           </div>
+           
+           <div className="hidden lg:flex items-center gap-2 text-sm">
              <MapPin className="w-4 h-4 text-muted-foreground" />
              <span className="text-muted-foreground">Kolkata</span>
            </div>
+
+            <nav className="items-center gap-6 hidden lg:flex">
+                {navLinks.map((link) => (
+                <Link
+                    key={link.href}
+                    href={link.href}
+                    className={cn(
+                        "text-sm font-medium transition-colors",
+                        pathname === link.href ? "text-primary font-bold" : "text-muted-foreground hover:text-primary"
+                    )}
+                >
+                    {link.label}
+                </Link>
+                ))}
+            </nav>
         </div>
 
-        <nav className="items-center gap-6 hidden lg:flex mx-auto">
-            {navLinks.map((link) => (
-            <Link
-                key={link.href}
-                href={link.href}
-                className={cn(
-                    "text-sm font-medium transition-colors",
-                    pathname === link.href ? "text-primary font-bold" : "text-muted-foreground hover:text-primary"
-                )}
-            >
-                {link.label}
-            </Link>
-            ))}
-        </nav>
 
-
-        <div className="flex flex-1 items-center justify-end gap-2 md:gap-4">
-             <div className="hidden md:block">
-                <div className="relative">
-                    <Input placeholder="Search..." className="pl-4 pr-10 h-10" />
-                    <Button variant="ghost" size="icon" className="absolute right-1 top-1/2 -translate-y-1/2 h-8 w-8">
-                        <Search className="h-5 w-5 text-muted-foreground" />
-                    </Button>
-                </div>
+        {/* Right Side: Search, Account, Cart */}
+        <div className="flex items-center gap-4">
+            <div className="hidden lg:block">
+              <div className="relative w-64">
+                  <Input placeholder="Search..." className="pl-4 pr-10 h-10" />
+                  <Button variant="ghost" size="icon" className="absolute right-1 top-1/2 -translate-y-1/2 h-8 w-8">
+                      <Search className="h-5 w-5 text-muted-foreground" />
+                  </Button>
+              </div>
             </div>
-            
-            <Button variant="ghost" size="icon" className="md:hidden">
-              <Search className="h-6 w-6" />
-              <span className="sr-only">Search</span>
-            </Button>
 
             {loading ? (
               <Button variant="ghost" className="flex items-center gap-2 px-2" disabled>
@@ -213,6 +183,38 @@ export function Header() {
           
           <ClientOnlyCart />
         </div>
+
+        {/* Mobile Menu Trigger */}
+        <div className="lg:hidden">
+          <Sheet>
+            <SheetTrigger asChild>
+              <Button variant="ghost" size="icon">
+                <Menu className="h-6 w-6" />
+                <span className="sr-only">Toggle Menu</span>
+              </Button>
+            </SheetTrigger>
+            <SheetContent side="left" className="w-full max-w-xs">
+              <div className="p-4">
+                <Logo />
+              </div>
+              <nav className="mt-4 flex flex-col gap-4 px-4">
+                {navLinks.map((link) => (
+                  <Link
+                    key={link.href}
+                    href={link.href}
+                    className={cn(
+                        "text-lg font-medium hover:text-primary",
+                        pathname === link.href ? "text-primary" : "text-foreground/80"
+                    )}
+                  >
+                    {link.label}
+                  </Link>
+                ))}
+              </nav>
+            </SheetContent>
+          </Sheet>
+        </div>
+
       </div>
     </header>
   );
