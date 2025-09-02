@@ -42,7 +42,7 @@ function ClientOnlyCart() {
   return (
       <Sheet open={isCartOpen} onOpenChange={setIsCartOpen}>
         <SheetTrigger asChild>
-          <Button variant="ghost" className="relative flex items-center gap-2 px-2">
+          <Button variant="ghost" size="icon" className="relative">
              <div className="relative">
                 <ShoppingCart className="h-6 w-6" />
                 {cartCount > 0 && (
@@ -54,7 +54,6 @@ function ClientOnlyCart() {
                 </Badge>
                 )}
              </div>
-             <span className="hidden lg:block">Cart</span>
             <span className="sr-only">Open Cart</span>
           </Button>
         </SheetTrigger>
@@ -71,15 +70,6 @@ export function Header() {
   const { user, loading } = useAuth();
   const { toast } = useToast();
   const router = useRouter();
-  const [isScrolled, setIsScrolled] = useState(false);
-
-  useEffect(() => {
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 50);
-    };
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
 
   const navLinks = [
     { href: "/", label: "Home" },
@@ -102,10 +92,7 @@ export function Header() {
   }
 
   return (
-    <header className={cn(
-        "sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 transition-all duration-300",
-        isScrolled ? 'shadow-md' : ''
-      )}>
+    <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
        <div className="bg-foreground text-background text-xs py-1.5">
          <div className="container flex justify-between items-center">
             <div className="flex items-center gap-2">
@@ -116,11 +103,11 @@ export function Header() {
          </div>
        </div>
 
-      <div className="container flex h-20 items-center justify-between gap-4">
-        <div className="flex items-center gap-4">
+      <div className="container flex h-20 items-center">
+        <div className="lg:hidden mr-4">
           <Sheet>
             <SheetTrigger asChild>
-              <Button variant="ghost" size="icon" className="lg:hidden">
+              <Button variant="ghost" size="icon">
                 <Menu className="h-6 w-6" />
                 <span className="sr-only">Toggle Menu</span>
               </Button>
@@ -145,14 +132,17 @@ export function Header() {
               </nav>
             </SheetContent>
           </Sheet>
+        </div>
+
+        <div className="flex items-center gap-4">
            <Logo />
-           <div className={cn("items-center gap-2 text-sm hidden", isScrolled ? "lg:hidden" : "lg:flex")}>
+           <div className="items-center gap-2 text-sm hidden md:flex">
              <MapPin className="w-4 h-4 text-muted-foreground" />
              <span className="text-muted-foreground">Kolkata</span>
            </div>
         </div>
 
-        <nav className="items-center gap-6 hidden lg:flex">
+        <nav className="items-center gap-6 hidden lg:flex mx-auto">
             {navLinks.map((link) => (
             <Link
                 key={link.href}
@@ -168,8 +158,8 @@ export function Header() {
         </nav>
 
 
-        <div className="flex flex-1 items-center justify-end gap-2">
-             <div className={cn("w-full max-w-xs hidden", isScrolled ? "lg:block" : "lg:hidden")}>
+        <div className="flex flex-1 items-center justify-end gap-2 md:gap-4">
+             <div className="hidden md:block">
                 <div className="relative">
                     <Input placeholder="Search..." className="pl-4 pr-10 h-10" />
                     <Button variant="ghost" size="icon" className="absolute right-1 top-1/2 -translate-y-1/2 h-8 w-8">
@@ -177,6 +167,11 @@ export function Header() {
                     </Button>
                 </div>
             </div>
+            
+            <Button variant="ghost" size="icon" className="md:hidden">
+              <Search className="h-6 w-6" />
+              <span className="sr-only">Search</span>
+            </Button>
 
             {loading ? (
               <Button variant="ghost" className="flex items-center gap-2 px-2" disabled>
@@ -186,9 +181,9 @@ export function Header() {
             ) : user ? (
                  <DropdownMenu>
                     <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" className="flex items-center gap-2 px-2">
+                        <Button variant="ghost" size="icon">
                             <User className="h-6 w-6" />
-                            <span className="hidden lg:block">Account</span>
+                             <span className="sr-only">Account</span>
                         </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end">
@@ -208,10 +203,10 @@ export function Header() {
                     </DropdownMenuContent>
                 </DropdownMenu>
             ) : (
-                <Button asChild variant="ghost" className="flex items-center gap-2 px-2">
+                <Button asChild variant="ghost" size="icon">
                     <Link href="/login">
-                    <User className="h-6 w-6" />
-                    <span className="hidden lg:block">Login</span>
+                      <User className="h-6 w-6" />
+                      <span className="sr-only">Login</span>
                     </Link>
                 </Button>
             )}
@@ -219,14 +214,6 @@ export function Header() {
           <ClientOnlyCart />
         </div>
       </div>
-       <div className={cn("container pb-4 transition-all duration-300 lg:hidden", isScrolled ? 'h-0 overflow-hidden p-0' : 'h-auto')}>
-         <div className="relative">
-            <Input placeholder="Search for any delicious product..." className="pl-4 pr-10 h-10" />
-            <Button variant="ghost" size="icon" className="absolute right-1 top-1/2 -translate-y-1/2 h-8 w-8">
-                    <Search className="h-5 w-5 text-muted-foreground" />
-            </Button>
-        </div>
-       </div>
     </header>
   );
 }
