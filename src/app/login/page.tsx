@@ -9,10 +9,9 @@ import { Input } from '@/components/ui/input';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
-import { signInWithEmailAndPassword } from 'firebase/auth';
-import { auth } from '@/lib/firebase';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
+import { useAuth } from '@/hooks/use-auth';
 
 const loginSchema = z.object({
     email: z.string().email("Invalid email address."),
@@ -24,6 +23,7 @@ export default function LoginPage() {
     const router = useRouter();
     const searchParams = useSearchParams();
     const redirectUrl = searchParams.get('redirect') || '/account';
+    const { login } = useAuth();
 
     const form = useForm<z.infer<typeof loginSchema>>({
         resolver: zodResolver(loginSchema),
@@ -34,19 +34,18 @@ export default function LoginPage() {
     });
 
     async function onSubmit(values: z.infer<typeof loginSchema>) {
-        try {
-            await signInWithEmailAndPassword(auth, values.email, values.password);
+        const success = login(values.email, values.password);
+        if (success) {
             toast({
                 title: "Login Successful!",
                 description: "Welcome back!",
             });
             router.push(redirectUrl);
-        } catch (error: any) {
-            console.error("Login error:", error);
-            toast({
+        } else {
+             toast({
                 variant: 'destructive',
                 title: "Login Failed",
-                description: error.message || "An unknown error occurred.",
+                description: "Invalid email or password.",
             });
         }
     }

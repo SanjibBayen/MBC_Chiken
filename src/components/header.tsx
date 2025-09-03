@@ -23,8 +23,6 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
-import { signOut } from "firebase/auth";
-import { auth } from "@/lib/firebase";
 import { useToast } from "@/hooks/use-toast";
 
 function ClientOnlyCart() {
@@ -67,7 +65,7 @@ function ClientOnlyCart() {
 
 export function Header() {
   const pathname = usePathname();
-  const { user, loading } = useAuth();
+  const { user, loading, logout } = useAuth();
   const { toast } = useToast();
   const router = useRouter();
 
@@ -78,8 +76,8 @@ export function Header() {
     { href: "/contact", label: "Contact" },
   ];
 
-  const handleLogout = async () => {
-    await signOut(auth);
+  const handleLogout = () => {
+    logout();
     toast({
       title: "Logged Out",
       description: "You have been successfully logged out.",
@@ -103,37 +101,61 @@ export function Header() {
          </div>
        </div>
 
-      <div className="container flex h-20 items-center justify-between">
-        {/* Left Side: Logo, Location, Nav */}
-        <div className="flex items-center gap-8">
-           <div className="flex items-center gap-4">
-              <Logo />
-           </div>
-           
-           <div className="hidden lg:flex items-center gap-2 text-sm">
-             <MapPin className="w-4 h-4 text-muted-foreground" />
-             <span className="text-muted-foreground">Kolkata</span>
-           </div>
-
-            <nav className="items-center gap-6 hidden lg:flex">
+      <div className="container flex h-20 items-center">
+        <div className="lg:hidden mr-4">
+          <Sheet>
+            <SheetTrigger asChild>
+              <Button variant="ghost" size="icon">
+                <Menu className="h-6 w-6" />
+                <span className="sr-only">Toggle Menu</span>
+              </Button>
+            </SheetTrigger>
+            <SheetContent side="left" className="w-full max-w-xs">
+              <div className="p-4 border-b">
+                <Logo />
+              </div>
+              <nav className="mt-4 flex flex-col gap-4 px-4">
                 {navLinks.map((link) => (
-                <Link
+                  <Link
                     key={link.href}
                     href={link.href}
                     className={cn(
-                        "text-sm font-medium transition-colors",
-                        pathname === link.href ? "text-primary font-bold" : "text-muted-foreground hover:text-primary"
+                        "text-lg font-medium hover:text-primary",
+                        pathname === link.href ? "text-primary" : "text-foreground/80"
                     )}
-                >
+                  >
                     {link.label}
-                </Link>
+                  </Link>
                 ))}
-            </nav>
+              </nav>
+            </SheetContent>
+          </Sheet>
+        </div>
+        
+        <div className="flex items-center gap-8">
+           <Logo />
+           <div className="hidden md:flex items-center gap-2 text-sm">
+             <MapPin className="w-4 h-4 text-muted-foreground" />
+             <span className="text-muted-foreground">Kolkata</span>
+           </div>
         </div>
 
+        <nav className="items-center gap-6 hidden lg:flex mx-auto">
+            {navLinks.map((link) => (
+            <Link
+                key={link.href}
+                href={link.href}
+                className={cn(
+                    "text-sm font-medium transition-colors",
+                    pathname === link.href ? "text-primary font-bold" : "text-muted-foreground hover:text-primary"
+                )}
+            >
+                {link.label}
+            </Link>
+            ))}
+        </nav>
 
-        {/* Right Side: Search, Account, Cart */}
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-4 ml-auto">
             <div className="hidden lg:block">
               <div className="relative w-64">
                   <Input placeholder="Search..." className="pl-4 pr-10 h-10" />
@@ -142,11 +164,14 @@ export function Header() {
                   </Button>
               </div>
             </div>
+             <Button variant="ghost" size="icon" className="lg:hidden">
+                <Search className="h-6 w-6" />
+                <span className="sr-only">Search</span>
+            </Button>
 
             {loading ? (
               <Button variant="ghost" className="flex items-center gap-2 px-2" disabled>
                 <User className="h-6 w-6" />
-                <span className="hidden lg:block">...</span>
               </Button>
             ) : user ? (
                  <DropdownMenu>
@@ -183,38 +208,6 @@ export function Header() {
           
           <ClientOnlyCart />
         </div>
-
-        {/* Mobile Menu Trigger */}
-        <div className="lg:hidden">
-          <Sheet>
-            <SheetTrigger asChild>
-              <Button variant="ghost" size="icon">
-                <Menu className="h-6 w-6" />
-                <span className="sr-only">Toggle Menu</span>
-              </Button>
-            </SheetTrigger>
-            <SheetContent side="left" className="w-full max-w-xs">
-              <div className="p-4">
-                <Logo />
-              </div>
-              <nav className="mt-4 flex flex-col gap-4 px-4">
-                {navLinks.map((link) => (
-                  <Link
-                    key={link.href}
-                    href={link.href}
-                    className={cn(
-                        "text-lg font-medium hover:text-primary",
-                        pathname === link.href ? "text-primary" : "text-foreground/80"
-                    )}
-                  >
-                    {link.label}
-                  </Link>
-                ))}
-              </nav>
-            </SheetContent>
-          </Sheet>
-        </div>
-
       </div>
     </header>
   );

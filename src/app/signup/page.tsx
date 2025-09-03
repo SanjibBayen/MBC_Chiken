@@ -9,12 +9,9 @@ import { Input } from '@/components/ui/input';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
-import { createUserWithEmailAndPassword, updateProfile } from 'firebase/auth';
-import { auth, db } from '@/lib/firebase';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { doc, setDoc } from 'firebase/firestore';
-
+import { useAuth } from '@/hooks/use-auth';
 
 const signupSchema = z.object({
     name: z.string().min(2, "Name is required."),
@@ -26,6 +23,7 @@ const signupSchema = z.object({
 export default function SignupPage() {
     const { toast } = useToast();
     const router = useRouter();
+    const { login } = useAuth();
     const form = useForm<z.infer<typeof signupSchema>>({
         resolver: zodResolver(signupSchema),
         defaultValues: {
@@ -37,39 +35,14 @@ export default function SignupPage() {
     });
 
     async function onSubmit(values: z.infer<typeof signupSchema>) {
-        try {
-            const userCredential = await createUserWithEmailAndPassword(auth, values.email, values.password);
-            const user = userCredential.user;
-
-            await updateProfile(user, { displayName: values.name });
-
-            // Create user document in Firestore
-            await setDoc(doc(db, "users", user.uid), {
-                uid: user.uid,
-                name: values.name,
-                email: values.email,
-                phone: values.phone,
-                address: {
-                    street: '',
-                    city: '',
-                    pincode: '',
-                }
-            });
-
-
-            toast({
-                title: "Account Created!",
-                description: "You have been successfully signed up.",
-            });
-            router.push('/account');
-        } catch (error: any) {
-            console.error("Signup error:", error);
-            toast({
-                variant: 'destructive',
-                title: "Signup Failed",
-                description: error.message || "An unknown error occurred.",
-            });
-        }
+       
+        login(values.email, values.password, values.name, values.phone);
+        
+        toast({
+            title: "Account Created!",
+            description: "You have been successfully signed up.",
+        });
+        router.push('/account');
     }
 
     return (

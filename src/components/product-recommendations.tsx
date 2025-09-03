@@ -1,142 +1,376 @@
-'use client';
+import type { Product } from './types';
 
-import { useEffect, useState } from 'react';
-import { useCart } from '@/hooks/use-cart';
-import { getProductRecommendations } from '@/ai/flows/product-recommendations';
-import type { ProductRecommendationsOutput } from '@/ai/flows/product-recommendations';
-import Image from 'next/image';
-import Link from 'next/link';
-import { Button } from './ui/button';
-import { Skeleton } from './ui/skeleton';
-import { Wand2 } from 'lucide-react';
-import { useToast } from '@/hooks/use-toast';
-import { ProductService } from '@/services/product-service';
-import type { Product } from '@/lib/types';
-
-export function ProductRecommendations() {
-  const { cartItems, addToCart, setIsCartOpen } = useCart();
-  const [recommendations, setRecommendations] = useState<ProductRecommendationsOutput['recommendations']>([]);
-  const [recommendedProducts, setRecommendedProducts] = useState<Product[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
-  const { toast } = useToast();
-
-  useEffect(() => {
-    if (cartItems.length > 0) {
-      setIsLoading(true);
-      const fetchRecommendations = async () => {
-        try {
-          const cartData = cartItems.map(item => ({
-            productId: item.productId,
-            quantity: item.quantity,
-          }));
-          const result = await getProductRecommendations({ cartItems: cartData });
-          setRecommendations(result.recommendations);
-
-          const productPromises = result.recommendations.map(rec => ProductService.getProductById(rec.productId));
-          const products = (await Promise.all(productPromises)).filter((p): p is Product => p !== null);
-          setRecommendedProducts(products);
-
-        } catch (error) {
-          console.error('Failed to get product recommendations:', error);
-          toast({
-            variant: 'destructive',
-            title: 'AI Error',
-            description: 'Could not fetch AI recommendations.',
-          });
-        } finally {
-          setIsLoading(false);
-        }
-      };
-      fetchRecommendations();
-    } else {
-      setRecommendations([]);
-      setRecommendedProducts([]);
-    }
-  }, [cartItems, toast]);
-
-  if (isLoading) {
-    return <RecommendationSkeleton />;
-  }
-
-  if (recommendations.length === 0 || recommendedProducts.length === 0) {
-    return null;
-  }
-  
-  const handleAddToCart = (product: Product) => {
-    if(product) {
-        const defaultVariant = product.variants[0];
-        addToCart({
-            productId: product.id,
-            name: product.name,
-            variantName: defaultVariant.name,
-            price: defaultVariant.price,
-            image: product.images[0],
-            slug: product.slug,
-        })
-    }
-  }
-
-
-  return (
-    <div className="space-y-4">
-      <h4 className="font-semibold flex items-center gap-2">
-        <Wand2 className="h-5 w-5 text-primary" />
-        You Might Also Like
-      </h4>
-      <div className="space-y-4">
-        {recommendedProducts.map(product => {
-          const recommendation = recommendations.find(r => r.productId === product.id);
-          if (!recommendation) return null;
-
-          return (
-            <div key={product.id} className="flex gap-4 items-start bg-secondary/50 p-3 rounded-lg">
-              <Image
-                src={product.images[0]}
-                alt={product.name}
-                width={60}
-                height={60}
-                className="rounded-md object-cover"
-                data-ai-hint="raw chicken"
-              />
-              <div className="flex-1">
-                <Link href={`/products/${product.slug}`} onClick={() => setIsCartOpen(false)}>
-                    <p className="font-semibold text-sm hover:text-primary">{product.name}</p>
-                </Link>
-                <p className="text-xs text-muted-foreground italic mt-1">&quot;{recommendation.reason}&quot;</p>
-                <div className="flex justify-between items-center mt-2">
-                    <p className="text-sm font-bold text-primary">₹{product.variants[0].price}</p>
-                    <Button size="sm" variant="outline" onClick={() => handleAddToCart(product)}>
-                        Add
-                    </Button>
-                </div>
-              </div>
-            </div>
-          );
-        })}
-      </div>
-    </div>
-  );
-}
-
-function RecommendationSkeleton() {
-  return (
-     <div className="space-y-4">
-      <h4 className="font-semibold flex items-center gap-2">
-        <Wand2 className="h-5 w-5 text-primary" />
-        You Might Also Like
-      </h4>
-      <div className="space-y-4">
-        {[...Array(2)].map((_, i) => (
-            <div key={i} className="flex gap-4 items-start bg-secondary/50 p-3 rounded-lg">
-                <Skeleton className="h-[60px] w-[60px] rounded-md" />
-                <div className="flex-1 space-y-2">
-                    <Skeleton className="h-4 w-3/4" />
-                    <Skeleton className="h-3 w-full" />
-                    <Skeleton className="h-3 w-1/2" />
-                </div>
-            </div>
-        ))}
-      </div>
-    </div>
-  )
-}
+export const PRODUCTS_TO_SEED: Product[] = [
+  {
+    id: '1',
+    name: 'Chicken Curry Cut - Small Pieces',
+    slug: 'chicken-curry-cut-small',
+    category: 'Fresh Cuts',
+    description:
+      'Tender, juicy, and flavorful chicken pieces (approx. 50g each) perfect for making delicious and aromatic chicken curries. These small cuts ensure quick and even cooking. Freshly cut and hygienically packed.',
+    variants: [
+      {
+        name: '500g',
+        price: 160,
+        originalPrice: 193,
+        stock: 50,
+        pieces: '10-12',
+        serves: 4,
+      },
+      {
+        name: '1kg',
+        price: 304,
+        originalPrice: 365,
+        stock: 30,
+        pieces: '20-24',
+        serves: 6,
+      },
+      {
+        name: '1.5kg',
+        price: 450,
+        originalPrice: 540,
+        stock: 20,
+        pieces: '30-36',
+        serves: 8,
+      },
+    ],
+    images: ['https://picsum.photos/600/400?random=1'],
+    reviews: [
+      {
+        id: 'r1',
+        author: 'Suman',
+        rating: 5,
+        comment: 'Very fresh and tender!',
+        date: '2023-10-10',
+      },
+    ],
+  },
+  {
+    id: '2',
+    name: 'Chicken Curry Cut - Large Pieces',
+    slug: 'chicken-curry-cut-large',
+    category: 'Fresh Cuts',
+    description:
+      'Hearty, large chunks of bone-in chicken (approx. 100g each), ideal for rich and robust curries or biryanis. The bone adds extra flavor to your dishes. Store in the refrigerator for best results.',
+    variants: [
+      {
+        name: '500g',
+        price: 170,
+        originalPrice: 200,
+        stock: 45,
+        pieces: '4-6',
+        serves: 4,
+      },
+      {
+        name: '1kg',
+        price: 320,
+        originalPrice: 380,
+        stock: 25,
+        pieces: '8-12',
+        serves: 6,
+      },
+       {
+        name: '1.5kg',
+        price: 480,
+        originalPrice: 570,
+        stock: 15,
+        pieces: '12-18',
+        serves: 8,
+      },
+    ],
+    images: ['https://picsum.photos/600/400?random=2'],
+    reviews: [],
+  },
+  {
+    id: '3',
+    name: 'Chicken Keema (Mince)',
+    slug: 'chicken-keema',
+    category: 'Fresh Cuts',
+    description:
+      'Finely minced chicken, perfect for a variety of dishes like keema curry, patties, or stuffing. It cooks quickly and absorbs flavors beautifully. Best used fresh for optimal taste.',
+    variants: [
+      {
+        name: '500g',
+        price: 180,
+        originalPrice: 210,
+        stock: 40,
+        pieces: 'N/A',
+        serves: 4,
+      },
+      {
+        name: '1kg',
+        price: 340,
+        originalPrice: 400,
+        stock: 20,
+        pieces: 'N/A',
+        serves: 8,
+      },
+       {
+        name: '1.5kg',
+        price: 500,
+        originalPrice: 590,
+        stock: 10,
+        pieces: 'N/A',
+        serves: 12,
+      },
+    ],
+    images: ['https://picsum.photos/600/400?random=3'],
+    reviews: [
+      {
+        id: 'r2',
+        author: 'Amit',
+        rating: 5,
+        comment: 'Excellent quality keema.',
+        date: '2023-10-11',
+      },
+    ],
+  },
+  {
+    id: '4',
+    name: 'Chicken Drumsticks',
+    slug: 'chicken-drumsticks',
+    category: 'Fresh Cuts',
+    description:
+      'Juicy and meaty chicken drumsticks, a favorite for all ages. Perfect for frying, grilling, or making a flavorful drumstick curry. A guaranteed hit at any dinner table.',
+    variants: [
+      {
+        name: '500g',
+        price: 170,
+        originalPrice: 199,
+        stock: 60,
+        pieces: '5-7',
+        serves: 3,
+      },
+      {
+        name: '1kg',
+        price: 320,
+        originalPrice: 380,
+        stock: 35,
+        pieces: '10-14',
+        serves: 6,
+      },
+       {
+        name: '1.5kg',
+        price: 480,
+        originalPrice: 570,
+        stock: 25,
+        pieces: '15-21',
+        serves: 9,
+      },
+    ],
+    images: ['https://picsum.photos/600/400?random=4'],
+    reviews: [],
+  },
+  {
+    id: '5',
+    name: 'Chicken Breast - Boneless',
+    slug: 'chicken-breast-boneless',
+    category: 'Boneless',
+    description:
+      'Lean, tender, and versatile boneless chicken breast. Ideal for grilling, baking, stir-frying, or shredding for sandwiches and salads. A healthy and delicious option.',
+    variants: [
+      {
+        name: '500g',
+        price: 252,
+        originalPrice: 311,
+        stock: 55,
+        pieces: '2-4',
+        serves: 4,
+      },
+      {
+        name: '1kg',
+        price: 480,
+        originalPrice: 590,
+        stock: 30,
+        pieces: '4-8',
+        serves: 8,
+      },
+       {
+        name: '1.5kg',
+        price: 700,
+        originalPrice: 850,
+        stock: 20,
+        pieces: '6-12',
+        serves: 12,
+      },
+    ],
+    images: ['https://picsum.photos/600/400?random=5'],
+    reviews: [
+      {
+        id: 'r3',
+        author: 'Rina',
+        rating: 5,
+        comment: 'Always fresh and perfectly trimmed.',
+        date: '2023-10-12',
+      },
+    ],
+  },
+  {
+    id: '6',
+    name: 'Chicken Giblets (Liver, Stomach, Neck)',
+    slug: 'chicken-giblets',
+    category: 'Organ Meats',
+    description:
+      'A mix of chicken liver, stomach (gizzard), and neck. A delicacy in many cuisines, perfect for flavorful and nutritious traditional dishes. Must be cooked thoroughly.',
+    variants: [
+      {
+        name: '500g',
+        price: 120,
+        originalPrice: 140,
+        stock: 30,
+        pieces: 'N/A',
+        serves: 4,
+      },
+       {
+        name: '1kg',
+        price: 230,
+        originalPrice: 270,
+        stock: 20,
+        pieces: 'N/A',
+        serves: 8,
+      },
+    ],
+    images: ['https://picsum.photos/600/400?random=6'],
+    reviews: [],
+  },
+  {
+    id: '7',
+    name: 'Whole Chicken (without skin)',
+    slug: 'whole-chicken',
+    category: 'Specialty',
+    description:
+      'A whole chicken without skin (700-900g), perfect for a family roast, grilling, or cutting into pieces as per your requirement. Tender and juicy all the way through.',
+    variants: [
+      {
+        name: '1 pc (700-900g)',
+        price: 350,
+        originalPrice: 420,
+        stock: 15,
+        pieces: '1',
+        serves: 4,
+      },
+    ],
+    images: ['https://picsum.photos/600/400?random=7'],
+    reviews: [],
+  },
+  {
+    id: '8',
+    name: 'Chicken Leg - Boneless',
+    slug: 'chicken-leg-boneless',
+    category: 'Boneless',
+    description:
+      'Juicy, tender, and flavor-packed boneless chicken leg meat. It is more flavorful than chicken breast and is great for curries, kebabs, and stir-fries. A versatile cut for many recipes.',
+    variants: [
+      {
+        name: '500g',
+        price: 210,
+        originalPrice: 250,
+        stock: 40,
+        pieces: '4-6',
+        serves: 4,
+      },
+      {
+        name: '1kg',
+        price: 400,
+        originalPrice: 475,
+        stock: 20,
+        pieces: '8-12',
+        serves: 8,
+      },
+       {
+        name: '1.5kg',
+        price: 590,
+        originalPrice: 700,
+        stock: 15,
+        pieces: '12-18',
+        serves: 12,
+      },
+    ],
+    images: ['https://picsum.photos/600/400?random=8'],
+    reviews: [],
+  },
+  {
+    id: '9',
+    name: 'Country Chicken (Desi)',
+    slug: 'country-chicken',
+    category: 'Specialty',
+    description:
+      'Also known as Desi Murg, this free-range country chicken has a richer, more intense flavor and a firmer texture compared to broiler chicken. Perfect for slow-cooked traditional recipes.',
+    variants: [
+       {
+        name: '500g',
+        price: 280,
+        originalPrice: 320,
+        stock: 10,
+        pieces: '4-6',
+        serves: 3,
+      },
+      {
+        name: '1kg',
+        price: 550,
+        originalPrice: 650,
+        stock: 10,
+        pieces: '8-12',
+        serves: 5,
+      },
+    ],
+    images: ['https://picsum.photos/600/400?random=9'],
+    reviews: [],
+  },
+  {
+    id: '10',
+    name: 'Chicken for Pets (Dog Food)',
+    slug: 'dog-food-chicken',
+    category: 'More',
+    description:
+      'A healthy and natural source of protein for your furry friend. Cooked and unseasoned chicken pieces suitable for dogs and cats. Not for human consumption.',
+    variants: [
+       {
+        name: '500g',
+        price: 80,
+        originalPrice: 90,
+        stock: 50,
+        pieces: 'N/A',
+        serves: 0,
+      },
+      {
+        name: '1kg',
+        price: 150,
+        originalPrice: 175,
+        stock: 50,
+        pieces: 'N/A',
+        serves: 0,
+      },
+    ],
+    images: ['https://picsum.photos/600/400?random=10'],
+    reviews: [],
+  },
+  {
+    id: '11',
+    name: 'Chicken Wings',
+    slug: 'chicken-wings',
+    category: 'Fresh Cuts',
+    description:
+      'The perfect party snack or appetizer. These chicken wings can be fried, baked, or grilled to perfection. A crowd-pleasing favorite.',
+    variants: [
+      {
+        name: '500g (With Skin)',
+        price: 160,
+        originalPrice: 190,
+        stock: 30,
+        pieces: '6-8',
+        serves: 3,
+      },
+      {
+        name: '500g (Without Skin)',
+        price: 170,
+        originalPrice: 200,
+        stock: 30,
+        pieces: '6-8',
+        serves: 3,
+      },
+    ],
+    images: ['https://picsum.photos/600/400?random=11'],
+    reviews: [],
+  },
+];

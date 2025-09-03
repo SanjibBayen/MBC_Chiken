@@ -1,51 +1,45 @@
 
-import { db } from '@/lib/firebase';
-import { collection, getDocs, doc, getDoc, query, where, addDoc, updateDoc, deleteDoc, setDoc } from 'firebase/firestore';
 import type { Product } from '@/lib/types';
+import { PRODUCTS_TO_SEED } from '@/lib/products';
+
+// This service now returns dummy data instead of fetching from Firebase.
+let products: Product[] = [...PRODUCTS_TO_SEED];
 
 export class ProductService {
-  private static productsCollection = collection(db, 'products');
-
   static async getProducts(): Promise<Product[]> {
-    const snapshot = await getDocs(this.productsCollection);
-    return snapshot.docs.map(doc => ({ ...doc.data() as Omit<Product, 'id'>, id: doc.id }));
+    // Return a copy to prevent mutation
+    return Promise.resolve([...products]);
   }
 
   static async getProductById(id: string): Promise<Product | null> {
-    const docRef = doc(db, 'products', id);
-    const docSnap = await getDoc(docRef);
-
-    if (docSnap.exists()) {
-      return { ...docSnap.data() as Omit<Product, 'id'>, id: docSnap.id };
-    } else {
-      return null;
-    }
+    const product = products.find(p => p.id === id) || null;
+    return Promise.resolve(product);
   }
 
   static async getProductBySlug(slug: string): Promise<Product | null> {
-    const q = query(this.productsCollection, where('slug', '==', slug));
-    const querySnapshot = await getDocs(q);
-
-    if (!querySnapshot.empty) {
-      const doc = querySnapshot.docs[0];
-      return { ...doc.data() as Omit<Product, 'id'>, id: doc.id };
-    }
-    
-    return null;
+    const product = products.find(p => p.slug === slug) || null;
+    return Promise.resolve(product);
   }
 
   static async createProduct(productData: Omit<Product, 'id'>): Promise<string> {
-    const docRef = await addDoc(this.productsCollection, productData);
-    return docRef.id;
+    const newProduct: Product = {
+      ...productData,
+      id: `prod-${new Date().getTime()}-${Math.floor(Math.random() * 1000)}`,
+    };
+    products.push(newProduct);
+    console.log("New product added:", newProduct);
+    return Promise.resolve(newProduct.id);
   }
 
   static async updateProduct(id: string, productData: Partial<Omit<Product, 'id'>>): Promise<void> {
-    const docRef = doc(db, 'products', id);
-    await updateDoc(docRef, productData);
+    products = products.map(p => p.id === id ? { ...p, ...productData } as Product : p);
+    console.log("Product updated:", id, productData);
+    return Promise.resolve();
   }
 
   static async deleteProduct(id: string): Promise<void> {
-    const docRef = doc(db, 'products', id);
-    await deleteDoc(docRef);
+    products = products.filter(p => p.id !== id);
+    console.log("Product deleted:", id);
+    return Promise.resolve();
   }
 }

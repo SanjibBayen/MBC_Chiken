@@ -217,7 +217,7 @@ export function ProductForm({ initialData }: ProductFormProps) {
             <CardHeader>
                 <CardTitle>Variants</CardTitle>
                 <CardDescription>Define the different options for this product, like size or weight.</CardDescription>
-            </CardHeader>
+            </Header>
             <CardContent className="space-y-6">
                 {variantFields.map((field, index) => (
                     <div key={field.id} className="p-4 border rounded-md space-y-4 relative">

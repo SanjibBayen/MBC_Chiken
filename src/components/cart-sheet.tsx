@@ -9,7 +9,6 @@ import Image from "next/image";
 import Link from "next/link";
 import { Minus, Plus, ShoppingCart, Trash2 } from "lucide-react";
 import { DELIVERY_CHARGE } from "@/lib/constants";
-import { ProductRecommendations } from "./product-recommendations";
 
 export function CartSheet() {
   const { cartItems, cartCount, cartTotal, updateQuantity, removeFromCart, setIsCartOpen } = useCart();
@@ -72,8 +71,6 @@ export function CartSheet() {
                 </div>
               ))}
             </div>
-            <Separator className="my-6" />
-            <ProductRecommendations />
           </ScrollArea>
           
           <SheetFooter className="mt-auto border-t pt-4 pr-4">

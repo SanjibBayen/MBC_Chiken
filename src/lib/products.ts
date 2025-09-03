@@ -1,9 +1,5 @@
 import type { Product } from './types';
 
-// This file is now only for seeding the database and for local development.
-// The data is fetched from Firebase in the running application via ProductService.
-// To seed your Firestore database run `npm run seed:db`
-
 export const PRODUCTS_TO_SEED: Product[] = [
   {
     id: '1',
