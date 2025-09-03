@@ -6,7 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-import { Menu, Search, ShoppingCart, User, LogOut, Phone, MapPin } from "lucide-react";
+import { Menu, Search, ShoppingCart, User, LogOut, Phone } from "lucide-react";
 import { Logo } from "./logo";
 import { useCart } from "@/hooks/use-cart";
 import { useEffect, useState } from "react";
@@ -34,15 +34,15 @@ function ClientOnlyCart() {
   }, []);
 
   if (!isMounted) {
-     return <Button variant="ghost" className="relative flex items-center gap-2 px-2" disabled><ShoppingCart className="h-6 w-6" /><span className="hidden lg:block">Cart</span></Button>;
+     return <Button variant="ghost" size="icon" className="rounded-full" disabled><ShoppingCart className="h-5 w-5" /></Button>;
   }
   
   return (
       <Sheet open={isCartOpen} onOpenChange={setIsCartOpen}>
         <SheetTrigger asChild>
-          <Button variant="ghost" size="icon" className="relative">
+          <Button variant="ghost" size="icon" className="relative rounded-full">
              <div className="relative">
-                <ShoppingCart className="h-6 w-6" />
+                <ShoppingCart className="h-5 w-5" />
                 {cartCount > 0 && (
                 <Badge
                     variant="destructive"
@@ -91,11 +91,11 @@ export function Header() {
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-       <div className="bg-foreground text-background text-xs py-1.5">
+       <div className="bg-secondary text-secondary-foreground text-xs py-1.5">
          <div className="container flex justify-between items-center">
             <div className="flex items-center gap-2">
                 <Phone className="h-3 w-3" />
-                <span>{CONTACT_PHONE}</span>
+                <span>Call Us: {CONTACT_PHONE}</span>
             </div>
             <span className="font-medium tracking-wide hidden sm:block">{SHOP_SLOGAN}</span>
          </div>
@@ -132,15 +132,11 @@ export function Header() {
           </Sheet>
         </div>
         
-        <div className="flex items-center gap-8">
+        <div className="flex items-center gap-6">
            <Logo />
-           <div className="hidden md:flex items-center gap-2 text-sm">
-             <MapPin className="w-4 h-4 text-muted-foreground" />
-             <span className="text-muted-foreground">Kolkata</span>
-           </div>
         </div>
 
-        <nav className="items-center gap-6 hidden lg:flex mx-auto">
+        <nav className="items-center gap-8 hidden lg:flex mx-auto">
             {navLinks.map((link) => (
             <Link
                 key={link.href}
@@ -155,29 +151,29 @@ export function Header() {
             ))}
         </nav>
 
-        <div className="flex items-center gap-4 ml-auto">
+        <div className="flex items-center gap-2 ml-auto">
             <div className="hidden lg:block">
               <div className="relative w-64">
-                  <Input placeholder="Search..." className="pl-4 pr-10 h-10" />
-                  <Button variant="ghost" size="icon" className="absolute right-1 top-1/2 -translate-y-1/2 h-8 w-8">
+                  <Input placeholder="Search products..." className="pl-4 pr-10 h-10 rounded-full" />
+                  <Button variant="ghost" size="icon" className="absolute right-1 top-1/2 -translate-y-1/2 h-8 w-8 rounded-full">
                       <Search className="h-5 w-5 text-muted-foreground" />
                   </Button>
               </div>
             </div>
-             <Button variant="ghost" size="icon" className="lg:hidden">
-                <Search className="h-6 w-6" />
+             <Button variant="ghost" size="icon" className="lg:hidden rounded-full">
+                <Search className="h-5 w-5" />
                 <span className="sr-only">Search</span>
             </Button>
 
             {loading ? (
-              <Button variant="ghost" className="flex items-center gap-2 px-2" disabled>
-                <User className="h-6 w-6" />
+              <Button variant="ghost" size="icon" className="rounded-full" disabled>
+                <User className="h-5 w-5" />
               </Button>
             ) : user ? (
                  <DropdownMenu>
                     <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" size="icon">
-                            <User className="h-6 w-6" />
+                        <Button variant="ghost" size="icon" className="rounded-full">
+                            <User className="h-5 w-5" />
                              <span className="sr-only">Account</span>
                         </Button>
                     </DropdownMenuTrigger>
@@ -198,9 +194,9 @@ export function Header() {
                     </DropdownMenuContent>
                 </DropdownMenu>
             ) : (
-                <Button asChild variant="ghost" size="icon">
+                <Button asChild variant="ghost" size="icon" className="rounded-full">
                     <Link href="/login">
-                      <User className="h-6 w-6" />
+                      <User className="h-5 w-5" />
                       <span className="sr-only">Login</span>
                     </Link>
                 </Button>

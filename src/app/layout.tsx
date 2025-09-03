@@ -7,12 +7,11 @@ import { Footer } from '@/components/footer';
 import { CartProvider } from '@/hooks/use-cart';
 import { AuthProvider } from '@/hooks/use-auth';
 import { Analytics } from "@vercel/analytics/react"
-import { PT_Sans } from 'next/font/google';
+import { Inter } from 'next/font/google';
 
-const ptSans = PT_Sans({
+const inter = Inter({
   subsets: ['latin'],
-  weight: ['400', '700'],
-  variable: '--font-pt-sans',
+  variable: '--font-inter',
 });
 
 export const metadata: Metadata = {
@@ -30,7 +29,7 @@ export default function RootLayout({
       <body
         className={cn(
           'min-h-screen bg-background font-sans antialiased',
-          ptSans.variable
+          inter.variable
         )}
       >
         <AuthProvider>

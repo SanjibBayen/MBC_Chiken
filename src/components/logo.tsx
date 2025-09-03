@@ -3,13 +3,14 @@ import { Drumstick } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { SHOP_NAME } from '@/lib/constants';
 
-export function Logo({ className, inFooter = false }: { className?: string; inFooter?: boolean }) {
+export function Logo({ className }: { className?: string; }) {
   return (
     <Link href="/" className={cn("flex items-center gap-2", className)}>
-      <Drumstick className={cn("h-7 w-7", inFooter ? "text-primary-foreground" : "text-primary")} />
+      <div className="bg-primary text-primary-foreground p-2 rounded-lg">
+        <Drumstick className={cn("h-6 w-6")} />
+      </div>
       <span className={cn(
-        "text-xl font-bold tracking-tight",
-        inFooter ? "text-primary-foreground" : "text-primary"
+        "text-xl font-bold tracking-tight text-foreground"
       )}>
         {SHOP_NAME}
       </span>

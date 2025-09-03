@@ -5,6 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { ProductCard } from "@/components/product-card";
 import { ProductService } from "@/services/product-service";
+import { SHOP_NAME } from "@/lib/constants";
 
 const categories = [
   { name: 'Fresh Cuts', icon: Feather, description: 'Tender, juicy cuts, ready for your curry.' },
@@ -16,7 +17,7 @@ const categories = [
 const testimonials = [
   {
     name: 'Ankita S.',
-    quote: 'The chicken is always fresh and delivery is super fast. MBC is my go-to for weekly groceries!',
+    quote: `The chicken is always fresh and delivery is super fast. ${SHOP_NAME} is my go-to for weekly groceries!`,
     avatar: 'https://picsum.photos/100/100?random=1',
   },
   {
@@ -36,32 +37,32 @@ export default async function Home() {
 
   return (
     <div className="flex flex-col">
-      <section className="bg-secondary">
-        <div className="container mx-auto px-4 grid md:grid-cols-2 gap-8 items-center py-20 md:py-32">
+      <section className="bg-secondary/30">
+        <div className="container mx-auto px-4 grid md:grid-cols-2 gap-12 items-center py-20 md:py-32">
             <div className="text-center md:text-left">
-                 <h1 className="text-4xl md:text-6xl font-bold text-foreground tracking-tight">
+                 <h1 className="text-4xl md:text-6xl font-extrabold text-foreground tracking-tight !leading-tight">
                     Fresh Chicken,
                     <br />
                     <span className="text-primary">Delivered Fast.</span>
                 </h1>
-                <p className="mt-4 max-w-2xl text-lg md:text-xl text-muted-foreground">
+                <p className="mt-6 max-w-xl text-lg md:text-xl text-muted-foreground">
                     Your one-stop shop for the freshest, highest-quality chicken, hygienically packed and delivered right to your doorstep.
                 </p>
                 <div className="mt-8 flex justify-center md:justify-start gap-4">
-                    <Button asChild size="lg">
-                    <Link href="/products">Shop All Products</Link>
+                    <Button asChild size="lg" className="rounded-full">
+                      <Link href="/products">Shop All Products</Link>
                     </Button>
-                    <Button asChild size="lg" variant="outline">
-                    <Link href="/about">Our Story</Link>
+                    <Button asChild size="lg" variant="outline" className="rounded-full">
+                      <Link href="/about">Our Story</Link>
                     </Button>
                 </div>
             </div>
-            <div className="relative h-64 md:h-96">
+            <div className="relative h-72 md:h-[450px]">
                 <Image 
                     src="https://picsum.photos/800/600?random=100" 
                     alt="Fresh chicken cuts"
                     fill
-                    className="object-cover rounded-lg shadow-2xl"
+                    className="object-cover rounded-2xl shadow-2xl"
                     data-ai-hint="raw chicken pieces"
                 />
             </div>
@@ -74,7 +75,7 @@ export default async function Home() {
           <p className="text-muted-foreground text-center mb-12 max-w-xl mx-auto">From everyday cuts to specialty items, find exactly what you need for your next meal.</p>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
             {categories.map((category) => (
-              <Card key={category.name} className="text-center transform hover:-translate-y-2 transition-transform duration-300 ease-in-out shadow-md hover:shadow-xl border-t-4 border-t-primary bg-card">
+              <Card key={category.name} className="text-center transform hover:-translate-y-2 transition-transform duration-300 ease-in-out shadow-md hover:shadow-xl border-t-4 border-t-primary bg-card rounded-xl">
                 <CardHeader>
                   <div className="mx-auto bg-primary text-primary-foreground rounded-full w-16 h-16 flex items-center justify-center">
                     <category.icon className="w-8 h-8" />
@@ -90,7 +91,7 @@ export default async function Home() {
         </div>
       </section>
 
-      <section id="featured-products" className="py-16 md:py-24 bg-secondary">
+      <section id="featured-products" className="py-16 md:py-24 bg-secondary/30">
         <div className="container mx-auto px-4">
           <h2 className="text-3xl font-bold text-center mb-2">Top Picks for You</h2>
           <p className="text-muted-foreground text-center mb-12 max-w-xl mx-auto">Explore our best-selling products, loved by customers for their freshness and quality.</p>
@@ -130,12 +131,12 @@ export default async function Home() {
         </div>
       </section>
       
-      <section className="py-16 md:py-24 bg-secondary">
+      <section className="py-16 md:py-24 bg-secondary/30">
         <div className="container mx-auto px-4">
           <h2 className="text-3xl font-bold text-center mb-12">What Our Customers Say</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {testimonials.map((testimonial) => (
-              <Card key={testimonial.name} className="flex flex-col justify-center items-center text-center p-6 bg-card shadow-lg">
+              <Card key={testimonial.name} className="flex flex-col justify-center items-center text-center p-6 bg-card shadow-lg rounded-xl">
                  <Image src={testimonial.avatar} alt={testimonial.name} width={80} height={80} className="rounded-full mb-4 border-2 border-primary" data-ai-hint="person" />
                 <CardContent>
                   <p className="italic text-muted-foreground">&ldquo;{testimonial.quote}&rdquo;</p>

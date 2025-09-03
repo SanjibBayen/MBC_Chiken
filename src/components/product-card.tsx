@@ -33,7 +33,7 @@ export function ProductCard({ product }: ProductCardProps) {
     : 0;
 
   return (
-    <Card className="group flex flex-col overflow-hidden transition-all duration-300 hover:shadow-lg bg-card border">
+    <Card className="group flex flex-col overflow-hidden transition-all duration-300 hover:shadow-lg hover:-translate-y-1 bg-card border rounded-xl">
       <div className="relative">
         <Link href={`/products/${product.slug}`} className="block overflow-hidden aspect-video">
           <Image
@@ -56,14 +56,14 @@ export function ProductCard({ product }: ProductCardProps) {
         
         <div className="text-xs text-muted-foreground mt-2">
             <span>{defaultVariant.name}</span>
-            <span className="mx-1.5">|</span>
+            <span className="mx-1.5">·</span>
             <span>{defaultVariant.pieces} Pieces</span>
-            <span className="mx-1.5">|</span>
+            <span className="mx-1.5">·</span>
             <span>Serves {defaultVariant.serves}</span>
         </div>
 
         <div className="flex items-baseline gap-2 mt-2">
-            <p className="text-base font-bold text-foreground">₹{defaultVariant.price}</p>
+            <p className="text-lg font-bold text-foreground">₹{defaultVariant.price}</p>
             {defaultVariant.originalPrice && (
                  <p className="text-sm text-muted-foreground line-through">₹{defaultVariant.originalPrice}</p>
             )}
@@ -72,16 +72,15 @@ export function ProductCard({ product }: ProductCardProps) {
             )}
         </div>
       </CardContent>
-      <CardFooter className="p-4 pt-0 flex flex-col items-start gap-2">
-         <p className="text-xs text-muted-foreground">Tomorrow 6AM - 8AM</p>
+      <CardFooter className="p-4 pt-0">
         {product.variants.length > 1 ? (
-          <Button asChild variant="outline" className="w-full">
+          <Button asChild variant="outline" className="w-full rounded-full">
             <Link href={`/products/${product.slug}`}>Select Options</Link>
           </Button>
         ) : (
-          <Button className="w-full" onClick={handleAddToCart}>
+          <Button className="w-full rounded-full" onClick={handleAddToCart}>
             <Plus className="h-4 w-4 mr-2" />
-            Add
+            Add to Cart
           </Button>
         )}
       </CardFooter>
