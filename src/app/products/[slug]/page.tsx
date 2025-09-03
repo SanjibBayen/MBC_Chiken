@@ -1,81 +1,31 @@
-
-'use client';
-
-import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import { notFound } from 'next/navigation';
 import { Button } from '@/components/ui/button';
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
-import { Label } from '@/components/ui/label';
-import { useCart } from '@/hooks/use-cart';
-import { Star, Minus, Plus, ShoppingCart, ChevronRight } from 'lucide-react';
+import { Star, Minus, Plus, ShoppingCart } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 import { ProductCard } from '@/components/product-card';
 import { Breadcrumbs } from '@/components/breadcrumbs';
 import { ProductService } from '@/services/product-service';
-import type { Product } from '@/lib/types';
-import { Skeleton } from '@/components/ui/skeleton';
+import { ProductControls } from '@/components/product-controls';
 
-export default function ProductDetailPage({
+export default async function ProductDetailPage({
   params: { slug },
 }: {
   params: { slug: string };
 }) {
-  const { addToCart } = useCart();
-  const [product, setProduct] = useState<Product | null>(null);
-  const [relatedProducts, setRelatedProducts] = useState<Product[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-
-  useEffect(() => {
-    const fetchProduct = async () => {
-      setIsLoading(true);
-      const fetchedProduct = await ProductService.getProductBySlug(slug);
-      if (fetchedProduct) {
-        setProduct(fetchedProduct);
-        const fetchedRelatedProducts = await ProductService.getProducts();
-        setRelatedProducts(
-          fetchedRelatedProducts
-            .filter(
-              (p) =>
-                p.category === fetchedProduct.category && p.id !== fetchedProduct.id
-            )
-            .slice(0, 4)
-        );
-      } else {
-        notFound();
-      }
-      setIsLoading(false);
-    };
-    fetchProduct();
-  }, [slug]);
-
-  const [selectedVariant, setSelectedVariant] = useState(product?.variants[0]);
-  const [quantity, setQuantity] = useState(1);
-
-  useEffect(() => {
-    if (product) {
-      setSelectedVariant(product.variants[0]);
-    }
-  }, [product]);
-
-  if (isLoading || !product || !selectedVariant) {
-    return <ProductDetailSkeleton />;
+  const product = await ProductService.getProductBySlug(slug);
+  
+  if (!product) {
+    notFound();
   }
-
-  const handleAddToCart = () => {
-    for (let i = 0; i < quantity; i++) {
-      addToCart({
-        productId: product.id,
-        name: product.name,
-        variantName: selectedVariant.name,
-        price: selectedVariant.price,
-        image: product.images[0],
-        slug: product.slug,
-      });
-    }
-  };
-
+  
+  const relatedProducts = (await ProductService.getProducts())
+    .filter(
+      (p) => p.category === product.category && p.id !== product.id
+    )
+    .slice(0, 4);
+    
   const breadcrumbItems = [
     { label: 'Home', href: '/' },
     { label: product.category, href: '/products' },
@@ -122,69 +72,9 @@ export default function ProductDetailPage({
           </div>
 
           <p className="mt-6 text-foreground/80">{product.description}</p>
-
-          <div className="mt-8">
-            <h3 className="text-lg font-semibold">Select Weight</h3>
-            <RadioGroup
-              defaultValue={selectedVariant.name}
-              onValueChange={(value) => {
-                const newVariant = product.variants.find(
-                  (v) => v.name === value
-                );
-                if (newVariant) setSelectedVariant(newVariant);
-              }}
-              className="mt-4 flex flex-wrap gap-4"
-            >
-              {product.variants.map((variant) => (
-                <div key={variant.name}>
-                  <RadioGroupItem
-                    value={variant.name}
-                    id={variant.name}
-                    className="peer sr-only"
-                  />
-                  <Label
-                    htmlFor={variant.name}
-                    className="flex flex-col items-center justify-between rounded-md border-2 border-muted bg-popover p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary cursor-pointer min-w-[100px]"
-                  >
-                    <span>{variant.name}</span>
-                    <span className="font-bold mt-1">₹{variant.price}</span>
-                  </Label>
-                </div>
-              ))}
-            </RadioGroup>
-          </div>
-
-          <div className="mt-8 flex items-center gap-4">
-            <div className="flex items-center gap-2 border rounded-md p-2">
-              <Button
-                variant="ghost"
-                size="icon"
-                className="h-8 w-8"
-                onClick={() => setQuantity((q) => Math.max(1, q - 1))}
-              >
-                <Minus className="h-4 w-4" />
-              </Button>
-              <span className="w-8 text-center font-bold text-lg">
-                {quantity}
-              </span>
-              <Button
-                variant="ghost"
-                size="icon"
-                className="h-8 w-8"
-                onClick={() => setQuantity((q) => q + 1)}
-              >
-                <Plus className="h-4 w-4" />
-              </Button>
-            </div>
-            <Button
-              size="lg"
-              onClick={handleAddToCart}
-              className="flex-1 h-12"
-            >
-              <ShoppingCart className="mr-2 h-5 w-5" />
-              Add to Cart
-            </Button>
-          </div>
+          
+          <ProductControls product={product} />
+          
         </div>
       </div>
 
@@ -253,33 +143,4 @@ export default function ProductDetailPage({
       </div>
     </div>
   );
-}
-
-
-function ProductDetailSkeleton() {
-    return (
-        <div className="container mx-auto px-4 py-8">
-        <Skeleton className="h-6 w-1/2 mb-6" />
-        <div className="grid md:grid-cols-2 gap-12 mt-6">
-            <div>
-                <Skeleton className="aspect-square w-full rounded-lg" />
-            </div>
-            <div className="space-y-4">
-                <Skeleton className="h-10 w-3/4" />
-                <Skeleton className="h-6 w-1/4" />
-                <Skeleton className="h-6 w-1/2" />
-                <Skeleton className="h-20 w-full" />
-                <div className="flex gap-4">
-                    <Skeleton className="h-12 w-24" />
-                    <Skeleton className="h-12 w-24" />
-                    <Skeleton className="h-12 w-24" />
-                </div>
-                 <div className="flex items-center gap-4">
-                    <Skeleton className="h-12 w-32" />
-                    <Skeleton className="h-12 flex-1" />
-                 </div>
-            </div>
-        </div>
-        </div>
-    )
 }
